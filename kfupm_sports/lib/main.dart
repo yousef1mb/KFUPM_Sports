@@ -1,5 +1,3 @@
-// lib/features/main_page/main.dart
-
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/features/main_page/presentation/views/main_page_view.dart';
 
