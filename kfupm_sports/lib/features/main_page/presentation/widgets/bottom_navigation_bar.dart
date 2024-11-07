@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kfupm_sports/core/theme/app_colors.dart'; // Update this path based on your structure
 
 class BottomNavigationBarWidget extends StatelessWidget {
   final int currentIndex;
@@ -15,9 +16,10 @@ class BottomNavigationBarWidget extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
-      backgroundColor: Color(0xFFE2B56F), // Set background color here
-      selectedItemColor: Colors.white, // Set highlight color here
-      unselectedItemColor: Colors.black, // Optional: set unselected item color
+      backgroundColor: AppColors.navigationBar, // Set background color here
+      selectedItemColor: AppColors.primary, // Set highlight color here
+      unselectedItemColor:
+          AppColors.headLineFontColor, // Optional: set unselected item color
       items: [
         _buildBottomNavigationBarItem(
           icon: Icons.event, // Calendar icon
@@ -46,7 +48,9 @@ class BottomNavigationBarWidget extends StatelessWidget {
     return BottomNavigationBarItem(
       icon: Container(
         decoration: BoxDecoration(
-          color: isSelected ? Colors.green : Colors.transparent,
+          color: isSelected
+              ? AppColors.navigationBarHighlight
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         padding: EdgeInsets.all(8), // Padding around the icon

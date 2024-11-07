@@ -1,7 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart'; // Update this path based on your structure
+import 'package:kfupm_sports/features/main_page/presentation/widgets/bottom_navigation_bar.dart'; // Update this path based on your structure
 
-class MainPageView extends StatelessWidget {
+class MainPageView extends StatefulWidget {
+  @override
+  _MainPageViewState createState() => _MainPageViewState();
+}
+
+class _MainPageViewState extends State<MainPageView> {
+  int _currentIndex = 1; // Assuming 'Home' is at index 1
+
+  void _onTap(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+
+    // Navigate to different pages based on index
+    switch (index) {
+      case 0:
+        // Navigate to Events page
+        break;
+      case 1:
+        // Stay on Home page
+        break;
+      case 2:
+        // Navigate to Profile page
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +60,11 @@ class MainPageView extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavigationBarWidget(
+        currentIndex: _currentIndex,
+        onTap: _onTap,
+      ),
     );
   }
 }
+  
