@@ -6,44 +6,65 @@ class MatchCard extends StatelessWidget {
   final String date;
   final String location;
   final String playersJoined;
+  final String imageUrl;
+  final Color blendColor;
 
   const MatchCard({
-    Key? key,
+    super.key,
     required this.sport,
     required this.player,
     required this.date,
     required this.location,
     required this.playersJoined,
-  }) : super(key: key);
+    required this.imageUrl,
+    required this.blendColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.22,
+      width: double.infinity,
+      child: Card(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
+        elevation: 4,
         child: Stack(
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const ProfileIcon(),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: MatchDetails(
-                    sport: sport,
-                    player: player,
-                    date: date,
-                    location: location,
-                    playersJoined: playersJoined,
-                  ),
+            ClipRRect(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(10),
+              ),
+              child: ColorFiltered(
+                colorFilter: ColorFilter.mode(blendColor, BlendMode.color),
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
                 ),
-              ],
+              ),
             ),
-            const Positioned(
-              right: 8,
-              top: 8,
-              child: CardMenu(),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const ProfileIcon(),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: MatchDetails(
+                      sport: sport,
+                      player: player,
+                      date: date,
+                      location: location,
+                      playersJoined: playersJoined,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -53,14 +74,14 @@ class MatchCard extends StatelessWidget {
 }
 
 class ProfileIcon extends StatelessWidget {
-  const ProfileIcon({Key? key}) : super(key: key);
+  const ProfileIcon({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Icon(
+    return const Icon(
       Icons.person,
       size: 40,
-      color: Colors.grey[700],
+      color: Colors.white,
     );
   }
 }
@@ -73,13 +94,13 @@ class MatchDetails extends StatelessWidget {
   final String playersJoined;
 
   const MatchDetails({
-    Key? key,
+    super.key,
     required this.sport,
     required this.player,
     required this.date,
     required this.location,
     required this.playersJoined,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +111,11 @@ class MatchDetails extends StatelessWidget {
         const SizedBox(height: 8),
         Text(player, style: subtitleTextStyle),
         const SizedBox(height: 8),
-        Text(playersJoined, style: subtitleTextStyle),
+        Text(
+          playersJoined,
+          style:
+              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,7 +127,7 @@ class MatchDetails extends StatelessWidget {
                 Text(location, style: subtitleTextStyle),
               ],
             ),
-            const JoinedButton(),
+            const JoinButton(),
           ],
         ),
       ],
@@ -110,48 +135,27 @@ class MatchDetails extends StatelessWidget {
   }
 }
 
-class JoinedButton extends StatelessWidget {
-  const JoinedButton({Key? key}) : super(key: key);
+class JoinButton extends StatelessWidget {
+  const JoinButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.green,
+        color: const Color(0xFFE7B86D),
         borderRadius: BorderRadius.circular(30),
       ),
       child: const Text(
-        'Joined',
-        style: TextStyle(color: Colors.white),
+        "Join",
+        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
       ),
-    );
-  }
-}
-
-class CardMenu extends StatelessWidget {
-  const CardMenu({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      icon: const Icon(Icons.more_vert),
-      onSelected: (value) {
-        // Handle menu item selection
-        print(value);
-      },
-      itemBuilder: (BuildContext context) {
-        return {'Edit', 'Delete', 'Share'}.map((String choice) {
-          return PopupMenuItem<String>(
-            value: choice,
-            child: Text(choice),
-          );
-        }).toList();
-      },
     );
   }
 }
 
 // Styles
-const titleTextStyle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
-final subtitleTextStyle = TextStyle(fontSize: 16, color: Colors.grey[700]);
+const titleTextStyle =
+    TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white);
+const subtitleTextStyle =
+    TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold);

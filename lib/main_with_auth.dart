@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kfupm_sports/features/authentication/presentation/auth_screen.dart';
 import 'core/theme/theme.dart';
 
+// Changing the file name to become main_with_auth.dart
+
 void main() {
   runApp(const MainApp());
   // initialize services
