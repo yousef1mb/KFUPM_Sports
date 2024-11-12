@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kfupm_sports/core/theme/app_colors.dart'; // Update this path based on your structure
+import 'package:kfupm_sports/core/theme/app_colors.dart';
 
 class BottomNavigationBarWidget extends StatelessWidget {
   final int currentIndex;
