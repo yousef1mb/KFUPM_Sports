@@ -1,36 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
-import 'package:kfupm_sports/features/main_page/presentation/widgets/bottom_navigation_bar.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
+import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
 
-class MainPageView extends StatefulWidget {
+class MainPageView extends StatelessWidget {
   const MainPageView({super.key});
-
-  @override
-  _MainPageViewState createState() => _MainPageViewState();
-}
-
-class _MainPageViewState extends State<MainPageView> {
-  int _currentIndex = 1; // Assuming 'Home' is at index 1
-
-  void _onTap(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-
-    // Navigate to different pages based on index
-    switch (index) {
-      case 0:
-        // Navigate to Events page
-        break;
-      case 1:
-        // Stay on Home page
-        break;
-      case 2:
-        // Navigate to Profile page
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +50,8 @@ class _MainPageViewState extends State<MainPageView> {
               location: 'Building 39',
               playersJoined: '14/16',
               imageUrl:
-                  "Shttps://s3-alpha-sig.figma.com/img/acd1/a7b7/df9840fe9d894de3084e41b03c39691f?Expires=1732492800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lE1eQBv1o3sHFJ3aaAqvMjeZl4ukvhPkp1eKsrwZqSgwWFn5ZUPAxQtTpGANRiNalXDPTUsljEb6thXIhipuPzpr9SCGxbOavS0RxRPt2NRNKsycBWz7EnpGwmZYE6uFz4XpHvfpkyo8C2H0Dm8Kw4kbLDzHfUlC4JIrAH-h2qAFr2PtK6gNHkEK8xDaOOIQfD3GGUCrsUPXCpR2Bnfqig6SCs6TrLSWZSU-7QBdh7qRZva~ihjxywXvXSyNkeA-sVYznuwHTIO0Mk0gRhjYW8oEz~QatM4e6PqvkwiOSZuUP6q0V9pPyf1Hxa2pxJqnB7fMYPYTKkkS~CsoEcRxZw__",
-              blendColor: Colors.green,
+                  "https://s3-alpha-sig.figma.com/img/acd1/a7b7/df9840fe9d894de3084e41b03c39691f?Expires=1732492800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lE1eQBv1o3sHFJ3aaAqvMjeZl4ukvhPkp1eKsrwZqSgwWFn5ZUPAxQtTpGANRiNalXDPTUsljEb6thXIhipuPzpr9SCGxbOavS0RxRPt2NRNKsycBWz7EnpGwmZYE6uFz4XpHvfpkyo8C2H0Dm8Kw4kbLDzHfUlC4JIrAH-h2qAFr2PtK6gNHkEK8xDaOOIQfD3GGUCrsUPXCpR2Bnfqig6SCs6TrLSWZSU-7QBdh7qRZva~ihjxywXvXSyNkeA-sVYznuwHTIO0Mk0gRhjYW8oEz~QatM4e6PqvkwiOSZuUP6q0V9pPyf1Hxa2pxJqnB7fMYPYTKkkS~CsoEcRxZw__",
+              blendColor: Color(0xFF0D6761),
             ),
             SizedBox(height: 16), // Spacing between cards
             MatchCard(
@@ -89,14 +62,10 @@ class _MainPageViewState extends State<MainPageView> {
               playersJoined: '14/16',
               imageUrl:
                   'https://s3-alpha-sig.figma.com/img/7b4a/1c9c/c840d634ae0922d5fc8d630f34fe3c90?Expires=1732492800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Ul~4CZrLbQXww8s4Z1~SYSCWSFqy2olCvyqtlnqYFM2l46po5HhhMTGHLgpchHdMTnrDUODuaYZ7vdcJzOMn0bA-wivTTv5qlOq7wmLlv3aSfh1Hi-WDWqhlF9T7EFQY1iBitiM1djwUuGbtOtAJ13bgIcBV5-H0gO5yXqWMbzdM~BSOU~JqDlDPUUztNVfraFNk5Z0~dw-liVrO1SgvGQ14iJOEv3CvxqpaXjF~3RYaukeJzIbkSvlUMVXxtxCdTjYznqNglAnEFIEJrHSdvj2TnVLglPde-4M2N3POPtbo78o6WdQsjqfFyI0D~~xIydPBJJgl8NqfYCMNSjB0Vw__',
-              blendColor: Colors.blue,
+              blendColor: Color(0xFF12385D),
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBarWidget(
-        currentIndex: _currentIndex,
-        onTap: _onTap,
       ),
     );
   }
