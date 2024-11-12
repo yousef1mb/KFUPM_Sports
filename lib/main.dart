@@ -1,22 +1,21 @@
+// lib/features/main_page/main.dart
+
 import 'package:flutter/material.dart';
-import 'package:kfupm_sports/features/authentication/presentation/auth_screen.dart';
-import 'core/theme/theme.dart';
+import 'package:kfupm_sports/features/main_page/presentation/views/main_page_view.dart';
 
 void main() {
-  runApp(const MainApp());
-  // initialize services
+  runApp(MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'KFUPM Sports',
-      theme: AppTheme.lightTheme,
-      home:const AuthScreen(),
-      
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
+      home: MainPageView(),
     );
   }
 }
