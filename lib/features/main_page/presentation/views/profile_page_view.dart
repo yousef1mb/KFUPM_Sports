@@ -38,8 +38,6 @@ class ProfilePageView extends StatelessWidget {
             // Profile Picture and Name
             CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage(
-                  'assets/profile_picture.png'), // Replace with actual image path
             ),
             const SizedBox(height: 12),
             const Text(
