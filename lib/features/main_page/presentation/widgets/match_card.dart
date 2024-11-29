@@ -3,9 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:kfupm_sports/models/match_information.dart';
 import 'package:uuid/uuid.dart';
 
-class MatchCard extends StatelessWidget {
+class MatchCard extends StatefulWidget {
   final MatchInformation matchInformation;
   const MatchCard({super.key, required this.matchInformation});
+
+  @override
+  State<MatchCard> createState() => _MatchCardState();
+}
+
+class _MatchCardState extends State<MatchCard> {
+  bool joined = false;
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +34,9 @@ class MatchCard extends StatelessWidget {
               ),
               child: ColorFiltered(
                 colorFilter: ColorFilter.mode(
-                    matchInformation.blendColor, BlendMode.color),
+                    widget.matchInformation.blendColor, BlendMode.color),
                 child: Image.asset(
-                  matchInformation.image,
+                  widget.matchInformation.image,
                   fit: BoxFit.cover,
                   width: double.infinity,
                 ),
@@ -50,12 +57,14 @@ class MatchCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(matchInformation.sport, style: titleTextStyle),
+                        Text(widget.matchInformation.sport,
+                            style: titleTextStyle),
                         const SizedBox(height: 8),
-                        Text(matchInformation.player, style: subtitleTextStyle),
+                        Text(widget.matchInformation.player,
+                            style: subtitleTextStyle),
                         const SizedBox(height: 8),
                         Text(
-                          matchInformation.playersJoined,
+                          widget.matchInformation.playersJoined,
                           style: const TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         ),
@@ -65,14 +74,44 @@ class MatchCard extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                Text(matchInformation.date,
+                                Text(widget.matchInformation.date,
                                     style: subtitleTextStyle),
                                 const SizedBox(width: 8),
-                                Text(matchInformation.location,
+                                Text(widget.matchInformation.location,
                                     style: subtitleTextStyle),
                               ],
                             ),
-                            const JoinButton(),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  final firebaseFirestore = FirebaseFirestore
+                                      .instance
+                                      .collection("user_matches");
+                                  Uuid uuid = const Uuid();
+                                  joined = !joined;
+                                  firebaseFirestore
+                                      .doc("event: ${uuid.v4()}")
+                                      .set({});
+                                });
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: joined
+                                      ? Colors.lightGreen
+                                      : const Color(0xFFE7B86D),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Text(
+                                  joined ? "Joined" : "Join",
+                                  style: TextStyle(
+                                      color:
+                                          joined ? Colors.white : Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -82,48 +121,6 @@ class MatchCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class JoinButton extends StatefulWidget {
-  const JoinButton({
-    super.key,
-    joined,
-  });
-
-  @override
-  State<JoinButton> createState() => _JoinButtonState();
-}
-
-class _JoinButtonState extends State<JoinButton> {
-  bool joined = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          final firebaseFirestore =
-              FirebaseFirestore.instance.collection("user_matches");
-          Uuid uuid = const Uuid();
-          joined = !joined;
-          firebaseFirestore.doc("event: ${uuid.v4()}").set({});
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: joined ? Colors.lightGreen : const Color(0xFFE7B86D),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Text(
-          joined ? "Joined" : "Join",
-          style: TextStyle(
-              color: joined ? Colors.white : Colors.black,
-              fontWeight: FontWeight.bold),
         ),
       ),
     );

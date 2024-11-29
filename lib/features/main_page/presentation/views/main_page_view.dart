@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
-import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
-import 'package:kfupm_sports/models/match_information.dart';
+import 'package:kfupm_sports/core/utils/constants.dart';
 
 class MainPageView extends StatelessWidget {
   const MainPageView({super.key});
@@ -42,19 +41,11 @@ class MainPageView extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: const [
-            MatchCard(
-              matchInformation: MatchInformation(
-                  sport: "Sport",
-                  player: "Player",
-                  date: "Date  |",
-                  location: "Location",
-                  playersJoined: "Players Joined",
-                  image: "assets/images/football.jpeg",
-                  blendColor: Color(0xff123456)),
-            ),
-          ],
+        child: ListView.builder(
+          itemCount: matches.length,
+          itemBuilder: (context, index) {
+            return matches[index];
+          },
         ),
       ),
     );

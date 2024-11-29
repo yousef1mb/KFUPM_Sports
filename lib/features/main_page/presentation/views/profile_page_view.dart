@@ -36,7 +36,7 @@ class ProfilePageView extends StatelessWidget {
         child: Column(
           children: [
             // Profile Picture and Name
-            CircleAvatar(
+            const CircleAvatar(
               radius: 50,
             ),
             const SizedBox(height: 12),
@@ -87,7 +87,7 @@ class ProfilePageView extends StatelessWidget {
                   label: const Text("🏐 Volleyball"),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
+                    side: const BorderSide(
                         color: AppColors.navigationBar), // Border only
                   ),
                 ),
@@ -95,21 +95,21 @@ class ProfilePageView extends StatelessWidget {
                   label: const Text("🏀 Basketball"),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: AppColors.navigationBar),
+                    side: const BorderSide(color: AppColors.navigationBar),
                   ),
                 ),
                 Chip(
                   label: const Text("🏸 Badminton"),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: AppColors.navigationBar),
+                    side: const BorderSide(color: AppColors.navigationBar),
                   ),
                 ),
                 Chip(
                   label: const Text("⚽ Football"),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: AppColors.navigationBar),
+                    side: const BorderSide(color: AppColors.navigationBar),
                   ),
                 ),
               ],
@@ -132,21 +132,21 @@ class ProfilePageView extends StatelessWidget {
                   label: const Text("🏐 Middle Blocker"),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: AppColors.navigationBar),
+                    side: const BorderSide(color: AppColors.navigationBar),
                   ),
                 ),
                 Chip(
                   label: const Text("🏀 Center"),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: AppColors.navigationBar),
+                    side: const BorderSide(color: AppColors.navigationBar),
                   ),
                 ),
                 Chip(
                   label: const Text("R Wing"),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(color: AppColors.navigationBar),
+                    side: const BorderSide(color: AppColors.navigationBar),
                   ),
                 ),
               ],

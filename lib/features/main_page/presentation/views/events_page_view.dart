@@ -64,7 +64,6 @@ class EventsPageView extends StatelessWidget {
             itemCount: events.length,
             itemBuilder: (context, index) {
               final event = events[index].data() as Map<String, dynamic>;
-
               final sport = event['sport'] as String? ?? 'Unknown';
               final player = event['player'] as String? ?? 'Unknown';
               final location = event['location'] as String? ?? 'Unknown';
@@ -82,7 +81,7 @@ class EventsPageView extends StatelessWidget {
                         date: formattedDate,
                         location: location,
                         playersJoined: playersJoined,
-                        image: "images.",
+                        image: "assets/images/football.jpeg",
                         blendColor: const Color(0xff123456)),
                   ),
                   const SizedBox(height: 16),

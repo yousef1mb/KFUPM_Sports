@@ -10,11 +10,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(const KFUPMSportsApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class KFUPMSportsApp extends StatelessWidget {
+  const KFUPMSportsApp({super.key});
 
   @override
   Widget build(BuildContext context) {
