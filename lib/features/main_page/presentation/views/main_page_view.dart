@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
 import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
+import 'package:kfupm_sports/models/match_information.dart';
 
 class MainPageView extends StatelessWidget {
   const MainPageView({super.key});
@@ -44,25 +45,14 @@ class MainPageView extends StatelessWidget {
         child: ListView(
           children: const [
             MatchCard(
-              sport: 'Football',
-              player: 'Ahmed Saad',
-              date: 'Monday 20 Oct',
-              location: 'Building 39',
-              playersJoined: '14/16',
-              imageUrl:
-                  "https://s3-alpha-sig.figma.com/img/acd1/a7b7/df9840fe9d894de3084e41b03c39691f?Expires=1732492800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=lE1eQBv1o3sHFJ3aaAqvMjeZl4ukvhPkp1eKsrwZqSgwWFn5ZUPAxQtTpGANRiNalXDPTUsljEb6thXIhipuPzpr9SCGxbOavS0RxRPt2NRNKsycBWz7EnpGwmZYE6uFz4XpHvfpkyo8C2H0Dm8Kw4kbLDzHfUlC4JIrAH-h2qAFr2PtK6gNHkEK8xDaOOIQfD3GGUCrsUPXCpR2Bnfqig6SCs6TrLSWZSU-7QBdh7qRZva~ihjxywXvXSyNkeA-sVYznuwHTIO0Mk0gRhjYW8oEz~QatM4e6PqvkwiOSZuUP6q0V9pPyf1Hxa2pxJqnB7fMYPYTKkkS~CsoEcRxZw__",
-              blendColor: Color(0xFF0D6761),
-            ),
-            SizedBox(height: 16), // Spacing between cards
-            MatchCard(
-              sport: 'Volleyball',
-              player: 'Ahmed Saad',
-              date: 'Monday 20 Oct',
-              location: 'Building 39',
-              playersJoined: '14/16',
-              imageUrl:
-                  'https://s3-alpha-sig.figma.com/img/7b4a/1c9c/c840d634ae0922d5fc8d630f34fe3c90?Expires=1732492800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Ul~4CZrLbQXww8s4Z1~SYSCWSFqy2olCvyqtlnqYFM2l46po5HhhMTGHLgpchHdMTnrDUODuaYZ7vdcJzOMn0bA-wivTTv5qlOq7wmLlv3aSfh1Hi-WDWqhlF9T7EFQY1iBitiM1djwUuGbtOtAJ13bgIcBV5-H0gO5yXqWMbzdM~BSOU~JqDlDPUUztNVfraFNk5Z0~dw-liVrO1SgvGQ14iJOEv3CvxqpaXjF~3RYaukeJzIbkSvlUMVXxtxCdTjYznqNglAnEFIEJrHSdvj2TnVLglPde-4M2N3POPtbo78o6WdQsjqfFyI0D~~xIydPBJJgl8NqfYCMNSjB0Vw__',
-              blendColor: Color(0xFF12385D),
+              matchInformation: MatchInformation(
+                  sport: "Sport",
+                  player: "Player",
+                  date: "Date  |",
+                  location: "Location",
+                  playersJoined: "Players Joined",
+                  image: "assets/images/football.jpeg",
+                  blendColor: Color(0xff123456)),
             ),
           ],
         ),

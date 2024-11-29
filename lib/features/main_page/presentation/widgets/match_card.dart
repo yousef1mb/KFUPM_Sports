@@ -1,24 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:kfupm_sports/models/match_information.dart';
+import 'package:uuid/uuid.dart';
 
 class MatchCard extends StatelessWidget {
-  final String sport;
-  final String player;
-  final String date;
-  final String location;
-  final String playersJoined;
-  final String imageUrl;
-  final Color blendColor;
-
-  const MatchCard({
-    super.key,
-    required this.sport,
-    required this.player,
-    required this.date,
-    required this.location,
-    required this.playersJoined,
-    required this.imageUrl,
-    required this.blendColor,
-  });
+  final MatchInformation matchInformation;
+  const MatchCard({super.key, required this.matchInformation});
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +26,10 @@ class MatchCard extends StatelessWidget {
                 Radius.circular(10),
               ),
               child: ColorFiltered(
-                colorFilter: ColorFilter.mode(blendColor, BlendMode.color),
-                child: Image.network(
-                  imageUrl,
+                colorFilter: ColorFilter.mode(
+                    matchInformation.blendColor, BlendMode.color),
+                child: Image.asset(
+                  matchInformation.image,
                   fit: BoxFit.cover,
                   width: double.infinity,
                 ),
@@ -52,15 +40,42 @@ class MatchCard extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const ProfileIcon(),
+                  const Icon(
+                    Icons.person,
+                    size: 40,
+                    color: Colors.white,
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: MatchDetails(
-                      sport: sport,
-                      player: player,
-                      date: date,
-                      location: location,
-                      playersJoined: playersJoined,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(matchInformation.sport, style: titleTextStyle),
+                        const SizedBox(height: 8),
+                        Text(matchInformation.player, style: subtitleTextStyle),
+                        const SizedBox(height: 8),
+                        Text(
+                          matchInformation.playersJoined,
+                          style: const TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Text(matchInformation.date,
+                                    style: subtitleTextStyle),
+                                const SizedBox(width: 8),
+                                Text(matchInformation.location,
+                                    style: subtitleTextStyle),
+                              ],
+                            ),
+                            const JoinButton(),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -73,82 +88,43 @@ class MatchCard extends StatelessWidget {
   }
 }
 
-class ProfileIcon extends StatelessWidget {
-  const ProfileIcon({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Icon(
-      Icons.person,
-      size: 40,
-      color: Colors.white,
-    );
-  }
-}
-
-class MatchDetails extends StatelessWidget {
-  final String sport;
-  final String player;
-  final String date;
-  final String location;
-  final String playersJoined;
-
-  const MatchDetails({
+class JoinButton extends StatefulWidget {
+  const JoinButton({
     super.key,
-    required this.sport,
-    required this.player,
-    required this.date,
-    required this.location,
-    required this.playersJoined,
+    joined,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(sport, style: titleTextStyle),
-        const SizedBox(height: 8),
-        Text(player, style: subtitleTextStyle),
-        const SizedBox(height: 8),
-        Text(
-          playersJoined,
-          style:
-              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Text(date, style: subtitleTextStyle),
-                const SizedBox(width: 8),
-                Text(location, style: subtitleTextStyle),
-              ],
-            ),
-            const JoinButton(),
-          ],
-        ),
-      ],
-    );
-  }
+  State<JoinButton> createState() => _JoinButtonState();
 }
 
-class JoinButton extends StatelessWidget {
-  const JoinButton({super.key});
+class _JoinButtonState extends State<JoinButton> {
+  bool joined = false;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE7B86D),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: const Text(
-        "Join",
-        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          final firebaseFirestore =
+              FirebaseFirestore.instance.collection("user_matches");
+          Uuid uuid = const Uuid();
+          joined = !joined;
+          firebaseFirestore.doc("event: ${uuid.v4()}").set({});
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: joined ? Colors.lightGreen : const Color(0xFFE7B86D),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Text(
+          joined ? "Joined" : "Join",
+          style: TextStyle(
+              color: joined ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
