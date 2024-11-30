@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
-import 'package:kfupm_sports/core/utils/constants.dart';
+import 'package:kfupm_sports/features/main_page/presentation/views/add_event_view.dart';
 
 class MainPageView extends StatelessWidget {
   const MainPageView({super.key});
@@ -39,14 +39,18 @@ class MainPageView extends StatelessWidget {
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: matches.length,
-          itemBuilder: (context, index) {
-            return matches[index];
-          },
-        ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return const AddEventView();
+              },
+            ),
+          );
+        },
       ),
     );
   }

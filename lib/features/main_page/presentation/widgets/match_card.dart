@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:kfupm_sports/models/match_information.dart';
+import 'package:kfupm_sports/models/event_model.dart';
 import 'package:uuid/uuid.dart';
 
 class MatchCard extends StatefulWidget {
-  final MatchInformation matchInformation;
-  const MatchCard({super.key, required this.matchInformation});
+  final EventModel event;
+
+  const MatchCard({
+    super.key,
+    required this.event,
+  });
 
   @override
   State<MatchCard> createState() => _MatchCardState();
@@ -33,10 +37,10 @@ class _MatchCardState extends State<MatchCard> {
                 Radius.circular(10),
               ),
               child: ColorFiltered(
-                colorFilter: ColorFilter.mode(
-                    widget.matchInformation.blendColor, BlendMode.color),
+                colorFilter:
+                    const ColorFilter.mode(Colors.white, BlendMode.color),
                 child: Image.asset(
-                  widget.matchInformation.image,
+                  widget.event.imageUrl,
                   fit: BoxFit.cover,
                   width: double.infinity,
                 ),
@@ -57,14 +61,12 @@ class _MatchCardState extends State<MatchCard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.matchInformation.sport,
-                            style: titleTextStyle),
+                        Text(widget.event.sport, style: titleTextStyle),
                         const SizedBox(height: 8),
-                        Text(widget.matchInformation.player,
-                            style: subtitleTextStyle),
+                        Text(widget.event.player, style: subtitleTextStyle),
                         const SizedBox(height: 8),
                         Text(
-                          widget.matchInformation.playersJoined,
+                          widget.event.playersJoined,
                           style: const TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         ),
@@ -74,10 +76,10 @@ class _MatchCardState extends State<MatchCard> {
                           children: [
                             Row(
                               children: [
-                                Text(widget.matchInformation.date,
+                                Text(widget.event.date,
                                     style: subtitleTextStyle),
                                 const SizedBox(width: 8),
-                                Text(widget.matchInformation.location,
+                                Text(widget.event.location,
                                     style: subtitleTextStyle),
                               ],
                             ),

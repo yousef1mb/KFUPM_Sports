@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
 import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
-import 'package:kfupm_sports/models/match_information.dart';
+import 'package:kfupm_sports/models/event_model.dart';
 
 class EventsPageView extends StatelessWidget {
   const EventsPageView({super.key});
@@ -68,22 +68,18 @@ class EventsPageView extends StatelessWidget {
               final player = event['player'] as String? ?? 'Unknown';
               final location = event['location'] as String? ?? 'Unknown';
               final playersJoined = event['playersJoined'] as String? ?? '0/0';
-              final Timestamp timestamp =
-                  event['date'] as Timestamp? ?? Timestamp.now();
-              final DateTime dateTime = timestamp.toDate();
-              final formattedDate = _formatDate(dateTime);
+              final date = event['date'];
+              final imageUrl = event['imageUrl'] as String? ?? '';
+              EventModel eventObject = EventModel(
+                  sport: sport,
+                  player: player,
+                  playersJoined: playersJoined,
+                  date: date,
+                  location: location,
+                  imageUrl: imageUrl);
               return Column(
                 children: [
-                  MatchCard(
-                    matchInformation: MatchInformation(
-                        sport: sport,
-                        player: player,
-                        date: formattedDate,
-                        location: location,
-                        playersJoined: playersJoined,
-                        image: "assets/images/football.jpeg",
-                        blendColor: const Color(0xff123456)),
-                  ),
+                  MatchCard(event: eventObject),
                   const SizedBox(height: 16),
                 ],
               );
@@ -92,27 +88,5 @@ class EventsPageView extends StatelessWidget {
         },
       ),
     );
-  }
-
-  // Helper method to format the date
-  String _formatDate(DateTime date) {
-    const months = [
-      '1',
-      '2',
-      '3',
-      '4',
-      '5',
-      '6',
-      '7',
-      '8',
-      '9',
-      '10',
-      '11',
-      '12'
-    ];
-    final day = date.day;
-    final month = months[date.month - 1];
-    final year = date.year;
-    return '$day/$month/$year |'; // Example: October 20, 2023
   }
 }

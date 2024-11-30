@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/features/main_page/presentation/views/page_view.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:kfupm_sports/providers/general_provider.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -18,12 +20,17 @@ class KFUPMSportsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.green,
+    return ChangeNotifierProvider(
+      create: (BuildContext context) {
+        return GeneralProvider();
+      },
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.green,
+        ),
+        home: const PagesView(),
       ),
-      home: const PagesView(),
     );
   }
 }
