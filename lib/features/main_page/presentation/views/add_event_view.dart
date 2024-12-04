@@ -72,7 +72,6 @@ class _AddEventViewState extends State<AddEventView> {
                   "playersJoined": event.playersJoined,
                   "date": event.date,
                   "location": event.location,
-                  "imageUrl": event.imageUrl,
                 },
               );
             },

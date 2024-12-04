@@ -1,4 +1,4 @@
-class EventModel {
+class Event {
   String sport;
   String player;
   String playersJoined;
@@ -6,7 +6,7 @@ class EventModel {
   String location;
   String imageUrl;
 
-  EventModel({
+  Event({
     required this.sport,
     required this.player,
     required this.playersJoined,

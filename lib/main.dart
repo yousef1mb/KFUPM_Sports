@@ -27,8 +27,7 @@ class KFUPMSportsApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: Colors.green,
-        ),
+            primarySwatch: Colors.green, scaffoldBackgroundColor: Colors.white),
         home: const PagesView(),
       ),
     );

@@ -11,34 +11,15 @@ class EventsPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100),
-        child: Column(
-          children: [
-            AppBar(
-              title: Container(
-                padding: const EdgeInsets.only(top: 20),
-                child: const Text(
-                  'Find Match',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              centerTitle: true,
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-            ),
-            Container(
-              padding: const EdgeInsets.only(top: 16.0),
-              height: 10,
-              color: AppColors.navigationBar,
-              width: double.infinity,
-            ),
-          ],
+      appBar: AppBar(
+        backgroundColor: AppColors.navigationBar,
+        title: const Text(
+          "Matches",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        centerTitle: true,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: firebaseFirestore.collection('events').snapshots(),
@@ -64,13 +45,13 @@ class EventsPageView extends StatelessWidget {
             itemCount: events.length,
             itemBuilder: (context, index) {
               final event = events[index].data() as Map<String, dynamic>;
-              final sport = event['sport'] as String? ?? 'Unknown';
-              final player = event['player'] as String? ?? 'Unknown';
-              final location = event['location'] as String? ?? 'Unknown';
-              final playersJoined = event['playersJoined'] as String? ?? '0/0';
+              final sport = event['sport'];
+              final player = event['player'];
+              final location = event['location'];
+              final playersJoined = event['playersJoined'];
               final date = event['date'];
-              final imageUrl = event['imageUrl'] as String? ?? '';
-              EventModel eventObject = EventModel(
+              final imageUrl = event['imageUrl'];
+              Event eventObject = Event(
                   sport: sport,
                   player: player,
                   playersJoined: playersJoined,

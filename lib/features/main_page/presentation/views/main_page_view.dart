@@ -8,36 +8,15 @@ class MainPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100), // Adjust height as needed
-        child: Column(
-          children: [
-            AppBar(
-              title: Container(
-                padding: const EdgeInsets.only(
-                    top: 20), // Adjust the top padding as needed
-                child: const Text(
-                  'My Matches',
-                  style: TextStyle(
-                    fontSize: 32, // Larger font size
-                    fontWeight: FontWeight.bold, // Bold font
-                    color: Colors.black, // Black color
-                  ),
-                ),
-              ),
-              centerTitle: true,
-              backgroundColor: Colors.transparent, // Transparent background
-              elevation: 0, // No shadow
-            ),
-            Container(
-              padding: const EdgeInsets.only(
-                  top: 16.0), // Adjust the value as needed
-              height: 10, // Height of the line
-              color: AppColors.navigationBar, // Color of the line
-              width: double.infinity, // Full width
-            ),
-          ],
+      appBar: AppBar(
+        backgroundColor: AppColors.navigationBar,
+        title: const Text(
+          "My Matches",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
