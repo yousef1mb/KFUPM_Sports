@@ -69,7 +69,9 @@ class EventsPageView extends StatelessWidget {
                   imageUrl: imageUrl);
               return Column(
                 children: [
-                  MatchCard(event: eventObject),
+                  MatchCard(
+                    event: eventObject,
+                    screenWidth: MediaQuery.of(context).size.width,),
                   const SizedBox(height: 16),
                 ],
               );

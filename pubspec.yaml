@@ -34,4 +34,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/
+    - assets/images/black.jpg
+    - assets/images/football.jpeg
+    - assets/images/volleyball.jpeg
