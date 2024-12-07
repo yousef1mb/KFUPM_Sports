@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
+import 'package:kfupm_sports/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePageView extends StatelessWidget {
   const ProfilePageView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.navigationBar,
@@ -19,7 +22,7 @@ class ProfilePageView extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.dark_mode_outlined),
           onPressed: () {
-            // Add functionality here
+            themeProvider.toggleTheme(); 
           },
         ),
       ),
@@ -94,7 +97,7 @@ class ProfilePageView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     side: const BorderSide(color: Colors.grey),
                   ),
-                  backgroundColor: Colors.green,
+                  backgroundColor: Theme.of(context).colorScheme.onSecondary,
                 ),
                 Chip(
                   label: const Text("🏸 Badminton"),
@@ -139,7 +142,7 @@ class ProfilePageView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     side: const BorderSide(color: Colors.grey),
                   ),
-                  backgroundColor: Colors.green,
+                  backgroundColor: Theme.of(context).colorScheme.onSecondary,
                 ),
                 Chip(
                   label: const Text("🏀 Center"),

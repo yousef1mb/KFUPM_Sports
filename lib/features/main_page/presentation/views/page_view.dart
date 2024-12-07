@@ -82,7 +82,7 @@ class _MainPageViewState extends State<PagesView> {
       icon: Container(
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.navigationBarHighlight
+              ? Theme.of(context).colorScheme.onSecondary
               : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
