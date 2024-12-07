@@ -4,8 +4,11 @@ import 'package:kfupm_sports/core/theme/app_colors.dart';
 import 'package:kfupm_sports/features/main_page/presentation/views/add_event_view.dart';
 import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
 import 'package:kfupm_sports/models/event_model.dart';
+import 'package:kfupm_sports/providers/auth_provider.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../../../authentication/auth_screen.dart';
 
 class MainPageView extends StatelessWidget {
   const MainPageView({super.key});
@@ -16,17 +19,40 @@ class MainPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.dark_mode_outlined,
           ),
           onPressed: () {
             themeProvider.toggleTheme();
           },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () async {
+              // Logout logic
+              await authProvider.logout();
+
+              // Show Snackbar to confirm logout
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('You have been logged out')),
+              );
+
+              // Navigate back to the login screen
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+              );
+            },
+          ),
+        ],
         backgroundColor: AppColors.navigationBar,
         title: const Text(
           "My Matches",
@@ -87,7 +113,6 @@ class MainPageView extends StatelessWidget {
           );
         },
       ),
-      
     );
   }
 }

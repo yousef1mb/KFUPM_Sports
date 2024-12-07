@@ -14,10 +14,9 @@ dependencies:
   cloud_firestore:
   shared_preferences:
   # the annotation package containing @riverpod
-  riverpod_annotation:
-  riverpod:
   uuid: ^4.5.1
   provider: ^6.1.2
+  intl: ^0.20.1
 
 dev_dependencies:
   flutter_test:
@@ -26,8 +25,7 @@ dev_dependencies:
 
   # a tool for running code generators
   build_runner:
-  # the code generator
-  riverpod_generator:
+
   
 
 flutter:

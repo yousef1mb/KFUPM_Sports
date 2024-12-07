@@ -7,6 +7,9 @@ import 'package:kfupm_sports/models/event_model.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../providers/auth_provider.dart';
+import '../../../authentication/auth_screen.dart';
+
 class EventsPageView extends StatelessWidget {
   const EventsPageView({super.key});
 
@@ -14,14 +17,39 @@ class EventsPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        leading:  IconButton(
-          icon: Icon( Icons.dark_mode_outlined,),
+        leading: IconButton(
+          icon: Icon(
+            Icons.dark_mode_outlined,
+          ),
           onPressed: () {
             themeProvider.toggleTheme();
-           
-          },),
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () async {
+              // Logout logic
+              await authProvider.logout();
+
+              // Show Snackbar to confirm logout
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('You have been logged out')),
+              );
+
+              // Navigate back to the login screen
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
+            },
+          ),
+        ],
         backgroundColor: AppColors.navigationBar,
         title: const Text(
           "Matches",
@@ -72,7 +100,8 @@ class EventsPageView extends StatelessWidget {
                 children: [
                   MatchCard(
                     event: eventObject,
-                    screenWidth: MediaQuery.of(context).size.width,),
+                    screenWidth: MediaQuery.of(context).size.width,
+                  ),
                   const SizedBox(height: 16),
                 ],
               );
