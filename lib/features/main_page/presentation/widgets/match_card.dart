@@ -40,7 +40,7 @@ class _MatchCardState extends State<MatchCard> {
                 colorFilter: widget.event.imageUrl == "assets/images/black.jpg"
                     ? const ColorFilter.mode(Colors.white, BlendMode.clear)
                     : const ColorFilter.mode(Colors.white, BlendMode.color),
-                child: Image.asset(
+                child: Image.network(
                   widget.event.imageUrl,
                   fit: BoxFit.cover,
                   width: double.infinity,

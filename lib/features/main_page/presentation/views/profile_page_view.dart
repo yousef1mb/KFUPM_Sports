@@ -22,14 +22,6 @@ class ProfilePageView extends StatelessWidget {
             // Add functionality here
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // Add functionality here
-            },
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -38,6 +30,7 @@ class ProfilePageView extends StatelessWidget {
             // Profile Picture and Name
             const CircleAvatar(
               radius: 50,
+              backgroundColor: Colors.green,
             ),
             const SizedBox(height: 12),
             const Text(
@@ -90,13 +83,18 @@ class ProfilePageView extends StatelessWidget {
                     side: const BorderSide(
                         color: AppColors.navigationBar), // Border only
                   ),
+                  backgroundColor: const Color(0xFFE2B56F),
                 ),
                 Chip(
-                  label: const Text("🏀 Basketball"),
+                  label: const Text(
+                    "🏀 Basketball",
+                    style: TextStyle(color: Colors.white),
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: const BorderSide(color: AppColors.navigationBar),
+                    side: const BorderSide(color: Colors.grey),
                   ),
+                  backgroundColor: Colors.green,
                 ),
                 Chip(
                   label: const Text("🏸 Badminton"),
@@ -104,6 +102,7 @@ class ProfilePageView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     side: const BorderSide(color: AppColors.navigationBar),
                   ),
+                  backgroundColor: const Color(0xFFE2B56F),
                 ),
                 Chip(
                   label: const Text("⚽ Football"),
@@ -111,6 +110,7 @@ class ProfilePageView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     side: const BorderSide(color: AppColors.navigationBar),
                   ),
+                  backgroundColor: const Color(0xFFE2B56F),
                 ),
               ],
             ),
@@ -129,11 +129,17 @@ class ProfilePageView extends StatelessWidget {
               spacing: 8,
               children: [
                 Chip(
-                  label: const Text("🏐 Middle Blocker"),
+                  label: const Text(
+                    "🏐 Middle Blocker",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: const BorderSide(color: AppColors.navigationBar),
+                    side: const BorderSide(color: Colors.grey),
                   ),
+                  backgroundColor: Colors.green,
                 ),
                 Chip(
                   label: const Text("🏀 Center"),
@@ -141,6 +147,7 @@ class ProfilePageView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     side: const BorderSide(color: AppColors.navigationBar),
                   ),
+                  backgroundColor: const Color(0xFFE2B56F),
                 ),
                 Chip(
                   label: const Text("R Wing"),
@@ -148,6 +155,7 @@ class ProfilePageView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     side: const BorderSide(color: AppColors.navigationBar),
                   ),
+                  backgroundColor: const Color(0xFFE2B56F),
                 ),
               ],
             ),
