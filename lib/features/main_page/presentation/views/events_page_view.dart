@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
+import 'package:kfupm_sports/features/main_page/presentation/views/add_event_view.dart';
 import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
 import 'package:kfupm_sports/models/event_model.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
@@ -76,6 +77,20 @@ class EventsPageView extends StatelessWidget {
                 ],
               );
             },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).colorScheme.onSecondary,
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return const AddEventView();
+              },
+            ),
           );
         },
       ),

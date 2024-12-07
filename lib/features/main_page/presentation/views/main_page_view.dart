@@ -83,20 +83,7 @@ class MainPageView extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).colorScheme.onSecondary,
-        child: const Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) {
-                return const AddEventView();
-              },
-            ),
-          );
-        },
-      ),
+      
     );
   }
 }
