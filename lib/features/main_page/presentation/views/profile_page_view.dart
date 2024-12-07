@@ -33,7 +33,7 @@ class ProfilePageView extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
+        child: ListView(
           children: [
             // Profile Picture and Name
             const CircleAvatar(
