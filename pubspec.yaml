@@ -12,6 +12,7 @@ dependencies:
   firebase_core: ^3.7.0
   firebase_auth: ^5.3.2
   cloud_firestore:
+  shared_preferences:
   # the annotation package containing @riverpod
   riverpod_annotation:
   riverpod:
