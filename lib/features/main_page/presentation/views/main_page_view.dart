@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 
 class MainPageView extends StatelessWidget {
   const MainPageView({super.key});
-  
+
   get themeProvider => null;
 
   @override
@@ -19,12 +19,14 @@ class MainPageView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading:  IconButton(
-          icon: Icon( Icons.dark_mode_outlined,),
+        leading: IconButton(
+          icon: Icon(
+            Icons.dark_mode_outlined,
+          ),
           onPressed: () {
             themeProvider.toggleTheme();
-           
-          },),
+          },
+        ),
         backgroundColor: AppColors.navigationBar,
         title: const Text(
           "My Matches",
@@ -75,7 +77,9 @@ class MainPageView extends StatelessWidget {
                 children: [
                   MatchCard(
                     event: eventObject,
-                    screenWidth: MediaQuery.of(context).size.width),
+                    screenWidth: MediaQuery.of(context).size.width,
+                    joined: true,
+                  ),
                   const SizedBox(height: 16),
                 ],
               );

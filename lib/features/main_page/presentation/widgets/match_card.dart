@@ -7,19 +7,27 @@ import 'dart:math' as math; // For min()
 class MatchCard extends StatefulWidget {
   final Event event;
   final double screenWidth;
+  final bool joined;
 
-  const MatchCard({
-    super.key,
-    required this.event,
-    required this.screenWidth,
-  });
+  const MatchCard(
+      {super.key,
+      required this.event,
+      required this.screenWidth,
+      this.joined = false});
 
   @override
   State<MatchCard> createState() => _MatchCardState();
 }
 
 class _MatchCardState extends State<MatchCard> {
-  bool joined = false;
+  late bool joined;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the `joined` state with the value passed from the widget
+    joined = widget.joined;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +38,7 @@ class _MatchCardState extends State<MatchCard> {
     if (screenWidth < 600) {
       // If screen width is less than 600, use a taller ratio
       cardHeight = cardWidth * 0.34; // adjust as needed
-    } else if(screenWidth <1000){
+    } else if (screenWidth < 1000) {
       // If screen width is 1000 or more, use a shorter ratio
       cardHeight = cardWidth * 0.25; // adjust as needed
     } else {
@@ -83,7 +91,8 @@ class _MatchCardState extends State<MatchCard> {
               ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
                 child: ColorFiltered(
-                  colorFilter: widget.event.imageUrl == "assets/images/black.jpg"
+                  colorFilter: widget.event.imageUrl ==
+                          "assets/images/black.jpg"
                       ? const ColorFilter.mode(Colors.white, BlendMode.clear)
                       : const ColorFilter.mode(Colors.white, BlendMode.color),
                   child: Image.network(
@@ -189,17 +198,18 @@ class _MatchCardState extends State<MatchCard> {
                   onTap: () {
                     setState(() {
                       final firebaseFirestore =
-                      FirebaseFirestore.instance.collection("user_matches");
+                          FirebaseFirestore.instance.collection("user_matches");
                       Uuid uuid = const Uuid();
                       joined = !joined;
                       firebaseFirestore.doc("event: ${uuid.v4()}").set({});
                     });
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: joined ? Colors.lightGreen : const Color(0xFFE7B86D),
+                      color:
+                          joined ? Colors.lightGreen : const Color(0xFFE7B86D),
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Text(
