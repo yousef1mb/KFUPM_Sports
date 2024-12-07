@@ -3,15 +3,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
 import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
 import 'package:kfupm_sports/models/event_model.dart';
+import 'package:kfupm_sports/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class EventsPageView extends StatelessWidget {
   const EventsPageView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     return Scaffold(
       appBar: AppBar(
+        leading:  IconButton(
+          icon: Icon( Icons.dark_mode_outlined,),
+          onPressed: () {
+            themeProvider.toggleTheme();
+           
+          },),
         backgroundColor: AppColors.navigationBar,
         title: const Text(
           "Matches",
