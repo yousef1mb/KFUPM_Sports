@@ -16,7 +16,12 @@ class AddEventView extends StatefulWidget {
 
 class _AddEventViewState extends State<AddEventView> {
   CollectionReference events = FirebaseFirestore.instance.collection("events");
-  final List<String> sports = ['Football', 'Volleyball', 'Basketball', 'Tennis'];
+  final List<String> sports = [
+    'Football',
+    'Volleyball',
+    'Basketball',
+    'Tennis'
+  ];
   final List<String> locations = ['11', '36', '39'];
   List<String> players = []; // List of players
   DateTime? selectedDateTime;
@@ -33,7 +38,8 @@ class _AddEventViewState extends State<AddEventView> {
     players.add(event.player);
 
     playersCount = players.length; // Initialize players count
-    remainingCapacity = capacity - playersCount; // Initialize remaining capacity
+    remainingCapacity =
+        capacity - playersCount; // Initialize remaining capacity
   }
 
   @override
@@ -208,7 +214,8 @@ class _AddEventViewState extends State<AddEventView> {
                     String dateStr = DateFormat('d MMM')
                         .format(combinedDateTime)
                         .toUpperCase();
-                    String timeStr = DateFormat('HH:mm').format(combinedDateTime);
+                    String timeStr =
+                        DateFormat('HH:mm').format(combinedDateTime);
                     event.date = "$dateStr $timeStr";
                   });
                 },
@@ -245,7 +252,8 @@ class _AddEventViewState extends State<AddEventView> {
                     "playersJoined": event.playersJoined,
                     "players": players, // Save players list to Firestore
                     "capacity": capacity.toString(),
-                    "remainingCapacity": remainingCapacity.toString(), // Save remaining capacity
+                    "remainingCapacity":
+                        remainingCapacity.toString(), // Save remaining capacity
                     "date": event.date,
                     "location": event.location,
                   });

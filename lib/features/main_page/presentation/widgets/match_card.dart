@@ -217,9 +217,8 @@ class _MatchCardState extends State<MatchCard> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: joined
-                          ? Colors.lightGreen
-                          : const Color(0xFFE7B86D),
+                      color:
+                          joined ? Colors.lightGreen : const Color(0xFFE7B86D),
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Text(
