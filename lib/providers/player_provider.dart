@@ -71,23 +71,4 @@ class PlayerProvider with ChangeNotifier {
       throw Exception('Failed to remove match');
     }
   }
-
-  /// Fetch current player matches from playerMatches collection in Firestore
-  Future<void> fetchPlayerMatches() async {
-    try {
-      final doc =
-          await _firestore.collection('playerMatches').doc(userId).get();
-      if (doc.exists) {
-        final data = doc.data();
-        if (data != null && data['matches'] != null) {
-          // Assuming `matches` is an array of match documents with their details
-          _matches = List<Map<String, dynamic>>.from(data['matches']);
-          notifyListeners();
-        }
-      }
-    } catch (e) {
-      debugPrint('Error fetching player matches: $e');
-      throw Exception('Failed to fetch player matches');
-    }
-  }
 }

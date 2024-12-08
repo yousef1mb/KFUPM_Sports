@@ -1,26 +1,22 @@
-// ignore_for_file: use_build_context_synchronously
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
 import 'package:kfupm_sports/features/authentication/auth_screen.dart';
 import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
 import 'package:kfupm_sports/models/event_model.dart';
 import 'package:kfupm_sports/providers/auth_provider.dart';
+import 'package:kfupm_sports/providers/match_provider.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class MainPageView extends StatelessWidget {
   const MainPageView({super.key});
 
-  get themeProvider => null;
-
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     final authProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
+    final matchProvider = Provider.of<MatchProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -62,8 +58,8 @@ class MainPageView extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: firebaseFirestore.collection('events').snapshots(),
+      body: StreamBuilder<List<Map<String, dynamic>>>(
+        stream: matchProvider.streamPlayerMatches(context),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -75,23 +71,24 @@ class MainPageView extends StatelessWidget {
                 child: Text('Please make sure to connect to the Internet'));
           }
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No events found'));
-          }
+          final matches = snapshot.data ?? [];
 
-          final events = snapshot.data!.docs;
+          if (matches.isEmpty) {
+            return const Center(child: Text('No matches found'));
+          }
 
           return ListView.builder(
             padding: const EdgeInsets.all(16.0),
-            itemCount: events.length,
+            itemCount: matches.length,
             itemBuilder: (context, index) {
-              final event = events[index].data() as Map<String, dynamic>;
-              final sport = event['sportName'];
-              final player = event["players"][0];
-              final location = event['location'];
-              final playersJoined = event['playersJoined'];
-              final date = event['date'];
-              final remainingCapacity = event['remainingCapacity'];
+              final match = matches[index];
+              final sport = match['sportName'] ?? 'Unknown Sport';
+              final players = match['players'] as List<dynamic>? ?? [];
+              final player = players.isNotEmpty ? players[0] : 'Unknown Player';
+              final location = match['location'] ?? 'Unknown Location';
+              final playersJoined = match['playersJoined'] ?? '0';
+              final date = match['date'] ?? 'Unknown Date';
+              final remainingCapacity = match['remainingCapacity'] ?? '0';
 
               Event eventObject = Event(
                 sport: sport,
@@ -100,6 +97,7 @@ class MainPageView extends StatelessWidget {
                 date: date,
                 location: location,
               );
+
               return Column(
                 children: [
                   MatchCard(
