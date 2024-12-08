@@ -94,12 +94,12 @@ class MainPageView extends StatelessWidget {
               final remainingCapacity = event['remainingCapacity'];
 
               Event eventObject = Event(
-                  sport: sport,
-                  player: player,
-                  playersJoined: playersJoined,
-                  date: date,
-                  location: location,
-                  );
+                sport: sport,
+                player: player,
+                playersJoined: playersJoined,
+                date: date,
+                location: location,
+              );
               return Column(
                 children: [
                   MatchCard(

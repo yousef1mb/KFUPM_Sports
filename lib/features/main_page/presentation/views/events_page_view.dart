@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, prefer_const_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
 import 'package:kfupm_sports/features/main_page/presentation/views/add_event_view.dart';
@@ -60,8 +61,8 @@ class EventsPageView extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: StreamBuilder(
-        stream: Provider.of<MatchProvider>(context).getAllMatches(),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('events').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -73,36 +74,37 @@ class EventsPageView extends StatelessWidget {
                 child: Text('Please make sure to connect to the Internet'));
           }
 
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(child: Text('No events found'));
           }
 
-          final events = snapshot.data!;
+          final events = snapshot.data!.docs;
 
           return ListView.builder(
             padding: const EdgeInsets.all(16.0),
             itemCount: events.length,
             itemBuilder: (context, index) {
-              final event = events[0];
+              final event = events[index].data() as Map<String, dynamic>;
               final sport = event['sportName'];
-              final players = event['players'];
+              final player = event["players"][0];
               final location = event['location'];
               final playersJoined = event['playersJoined'];
-              final remainingCapacity = event['remainingCapacity'];
               final date = event['date'];
+              final remainingCapacity = event['remainingCapacity'];
 
               Event eventObject = Event(
-                  sport: sport,
-                  player: players,
-                  playersJoined: playersJoined,
-                  date: date,
-                  location: location,
+                sport: sport,
+                player: player,
+                playersJoined: playersJoined,
+                date: date,
+                location: location,
               );
               return Column(
                 children: [
                   MatchCard(
                     event: eventObject,
                     screenWidth: MediaQuery.of(context).size.width,
+                    joined: true,
                   ),
                   const SizedBox(height: 16),
                 ],
