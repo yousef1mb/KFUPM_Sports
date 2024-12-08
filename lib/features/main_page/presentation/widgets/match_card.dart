@@ -95,7 +95,7 @@ class _MatchCardState extends State<MatchCard> {
                           "assets/images/black.jpg"
                       ? const ColorFilter.mode(Colors.white, BlendMode.clear)
                       : const ColorFilter.mode(Colors.white, BlendMode.color),
-                  child: Image.network(
+                  child: Image.asset(
                     widget.event.imageUrl,
                     fit: BoxFit.cover,
                     width: cardWidth,
