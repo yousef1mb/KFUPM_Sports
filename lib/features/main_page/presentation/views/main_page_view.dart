@@ -3,13 +3,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
+import 'package:kfupm_sports/features/authentication/auth_screen.dart';
 import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
 import 'package:kfupm_sports/models/event_model.dart';
 import 'package:kfupm_sports/providers/auth_provider.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
-
-import '../../../authentication/auth_screen.dart';
 
 class MainPageView extends StatelessWidget {
   const MainPageView({super.key});

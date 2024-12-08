@@ -8,9 +8,6 @@ import 'package:kfupm_sports/providers/auth_provider.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../providers/auth_provider.dart';
-import '../../../authentication/auth_screen.dart';
-
 class ProfilePageView extends StatefulWidget {
   const ProfilePageView({super.key});
 

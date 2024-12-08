@@ -7,7 +7,9 @@ import 'package:kfupm_sports/features/main_page/presentation/views/page_view.dar
 import 'package:firebase_core/firebase_core.dart';
 import 'package:kfupm_sports/providers/general_provider.dart';
 import 'package:kfupm_sports/providers/match_provider.dart';
+import 'package:kfupm_sports/providers/player_provider.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
+import 'package:kfupm_sports/providers/uuid_provider.dart';
 import 'package:provider/provider.dart';
 import 'features/authentication/auth_screen.dart';
 import 'features/authentication/user_info_form_screen.dart';
@@ -34,6 +36,15 @@ void main() async {
         ChangeNotifierProvider(create: (_) => GeneralProvider()),
         ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
         ChangeNotifierProvider(create: (_) => MatchProvider()),
+        ChangeNotifierProvider(
+            create: (_) => UserProvider()), // Add UserProvider
+        ChangeNotifierProxyProvider<UserProvider, PlayerProvider>(
+          create: (_) => PlayerProvider(userId: "placeholder"),
+          update: (context, userProvider, previous) {
+            return PlayerProvider(
+                userId: userProvider.kfupmId ?? "placeholder");
+          },
+        ), // Update PlayerProvider dynamically
       ],
       child: const KFUPMSportsApp(),
     ),
@@ -66,6 +77,8 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
@@ -80,32 +93,50 @@ class AuthWrapper extends StatelessWidget {
         }
 
         final user = snapshot.data!;
-        return FutureBuilder<DocumentSnapshot>(
-          future: FirebaseFirestore.instance
-              .collection('players')
-              .doc(user.uid)
-              .get(),
-          builder: (context, userSnapshot) {
-            if (userSnapshot.connectionState == ConnectionState.waiting) {
+        return FutureBuilder<void>(
+          future: userProvider.initializeKfupmId(), // Initialize KFUPM ID
+          builder: (context, kfupmSnapshot) {
+            if (kfupmSnapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (userSnapshot.hasError) {
-              debugPrint(
-                  'Error loading Firestore document: ${userSnapshot.error}');
+            if (kfupmSnapshot.hasError) {
+              debugPrint('Error initializing KFUPM ID: ${kfupmSnapshot.error}');
               return const Center(child: Text('Error loading user data.'));
             }
 
-            final data = userSnapshot.data;
+            // KFUPM ID is initialized, proceed to check user profile
+            return FutureBuilder<DocumentSnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection('players')
+                  .doc(
+                      userProvider.kfupmId) // Use KFUPM ID instead of hardcoded
+                  .get(),
+              builder: (context, userSnapshot) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-            // Check if the document does not exist
-            if (data == null || !data.exists) {
-              debugPrint('No document found for user: ${user.uid}');
-              return const UserInfoFormScreen();
-            }
+                if (userSnapshot.hasError) {
+                  debugPrint(
+                      'Error loading Firestore document: ${userSnapshot.error}');
+                  return const Center(child: Text('Error loading user data.'));
+                }
 
-            debugPrint('Profile is complete for user: ${user.uid}');
-            return const PagesView();
+                final data = userSnapshot.data;
+
+                // Check if the document does not exist
+                if (data == null || !data.exists) {
+                  debugPrint(
+                      'No document found for user: ${userProvider.kfupmId}');
+                  return const UserInfoFormScreen();
+                }
+
+                debugPrint(
+                    'Profile is complete for user: ${userProvider.kfupmId}');
+                return const PagesView();
+              },
+            );
           },
         );
       },

@@ -1,8 +1,9 @@
 // ignore_for_file: library_private_types_in_public_api, avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+
+import 'package:kfupm_sports/providers/player_provider.dart';
+import 'package:provider/provider.dart';
 
 class UserInfoFormScreen extends StatefulWidget {
   const UserInfoFormScreen({super.key});
@@ -13,7 +14,7 @@ class UserInfoFormScreen extends StatefulWidget {
 
 class _UserInfoFormScreenState extends State<UserInfoFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  File? _profilePicture;
+  // File? _profilePicture;
   final _fullNameController = TextEditingController();
   final _bioController = TextEditingController();
 
@@ -40,33 +41,40 @@ class _UserInfoFormScreenState extends State<UserInfoFormScreen> {
   List<String> selectedSports = [];
   List<String> selectedPositions = [];
 
-  Future<void> _pickProfilePicture() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _profilePicture = File(pickedFile.path);
-      });
-    }
-  }
+  // Future<void> _pickProfilePicture() async {
+  //   final pickedFile =
+  //       await ImagePicker().pickImage(source: ImageSource.gallery);
+  //   if (pickedFile != null) {
+  //     setState(() {
+  //       _profilePicture = File(pickedFile.path);
+  //     });
+  //   }
+  // }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       // Save data to Firebase or any backend
       final userData = {
-        'profilePicture': _profilePicture?.path, // You may want to upload this
-        'fullName': _fullNameController.text.trim(),
+        'name': _fullNameController.text.trim(),
         'bio': _bioController.text.trim(),
         'favoriteSports': selectedSports,
         'preferredPositions': selectedPositions,
       };
 
-      // Replace with Firebase Firestore save logic
+      // Accessing PlayerProvider safely
+      final playerProvider =
+          Provider.of<PlayerProvider>(context, listen: false);
 
+      playerProvider.savePlayerData(userData).then((_) {
+        // Navigate to the home screen after successful submission
+        Navigator.pushReplacementNamed(context, '/home');
+      }).catchError((error) {
+        // Handle errors gracefully
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save data: $error')),
+        );
+      });
       print(userData);
-
-      // Navigate to the main app screen
-      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
@@ -81,20 +89,20 @@ class _UserInfoFormScreenState extends State<UserInfoFormScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Picture Picker
-              GestureDetector(
-                onTap: _pickProfilePicture,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: _profilePicture != null
-                      ? FileImage(_profilePicture!)
-                      : null,
-                  child: _profilePicture == null
-                      ? const Icon(Icons.camera_alt, size: 50)
-                      : null,
-                ),
-              ),
-              const SizedBox(height: 20),
+              // // Profile Picture Picker
+              // GestureDetector(
+              //   onTap: _pickProfilePicture,
+              //   child: CircleAvatar(
+              //     radius: 50,
+              //     backgroundImage: _profilePicture != null
+              //         ? FileImage(_profilePicture!)
+              //         : null,
+              //     child: _profilePicture == null
+              //         ? const Icon(Icons.camera_alt, size: 50)
+              //         : null,
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
 
               // Full Name Field
               TextFormField(
