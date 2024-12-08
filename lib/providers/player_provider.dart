@@ -12,7 +12,7 @@ class PlayerProvider with ChangeNotifier {
   Map<String, dynamic> _playerData = {};
   Map<String, dynamic> get playerData => _playerData;
 
-  /// Fetch player data from Firestore
+  /// Fetch player data from (players collection in firebase)
   Future<void> fetchPlayerData() async {
     try {
       final doc = await _firestore.collection('players').doc(userId).get();
@@ -26,7 +26,7 @@ class PlayerProvider with ChangeNotifier {
     }
   }
 
-  /// Save or update player data
+  /// Save or update player data in players collection
   Future<void> savePlayerData(Map<String, dynamic> data) async {
     try {
       await _firestore
@@ -41,10 +41,10 @@ class PlayerProvider with ChangeNotifier {
     }
   }
 
-  /// Add a match to the player's matches array
-  Future<void> addMatch(String matchId) async {
+  /// Add a match to the player's matches array in playerMatches collection
+  Future<void> addMatchToPlayer(String matchId) async {
     try {
-      await _firestore.collection('players').doc(userId).update({
+      await _firestore.collection('playerMatches').doc(userId).update({
         'matches': FieldValue.arrayUnion([matchId]),
       });
       _playerData['matches'] = [...?_playerData['matches'], matchId];
@@ -55,10 +55,10 @@ class PlayerProvider with ChangeNotifier {
     }
   }
 
-  /// Remove a match from the player's matches array
-  Future<void> removeMatch(String matchId) async {
+  /// Remove a match from the player's matches array in playerMatches collection
+  Future<void> removeMatchFromPlayer(String matchId) async {
     try {
-      await _firestore.collection('players').doc(userId).update({
+      await _firestore.collection('playerMatches').doc(userId).update({
         'matches': FieldValue.arrayRemove([matchId]),
       });
       _playerData['matches'] = (_playerData['matches'] as List)
