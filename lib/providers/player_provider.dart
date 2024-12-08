@@ -72,4 +72,34 @@ class PlayerProvider with ChangeNotifier {
       throw Exception('Failed to remove match');
     }
   }
+
+  /// Add a match to the player's matches array in playerMatches collection
+  Future<void> addInviteToPlayer(String invID) async {
+    try {
+      await _firestore.collection('playerInvitations').doc(userId).update({
+        'invitations': FieldValue.arrayUnion([invID]),
+      });
+      _playerData['invitations'] = [...?_playerData['invitations'], invID];
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error adding invitations: $e');
+      throw Exception('Failed to add invitations');
+    }
+  }
+
+  /// Remove a match from the player's matches array in playerMatches collection
+  Future<void> removeInvitationsFromPlayer(String invID) async {
+    try {
+      await _firestore.collection('playerInvitations').doc(userId).update({
+        'invitations': FieldValue.arrayRemove([invID]),
+      });
+      _playerData['invitations'] = (_playerData['invitations'] as List)
+          .where((id) => id != invID)
+          .toList();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error removing invitations: $e');
+      throw Exception('Failed to remove invitations');
+    }
+  }
 }
