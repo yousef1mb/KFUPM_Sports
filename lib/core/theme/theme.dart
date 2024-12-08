@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
 
@@ -10,14 +12,21 @@ class AppTheme {
 
   //light theme
   static ThemeData lightTheme = ThemeData(
-    colorScheme: ColorScheme(brightness: Brightness.light, primary: AppColors.primary, onPrimary: AppColors.secondary, secondary: AppColors.navigationBar, onSecondary: AppColors.navigationBarHighlight, error: AppColors.headLineBorderColor, onError: AppColors.headLineBorderColor, surface: AppColors.headLineBorderColor, onSurface: AppColors.darkNavigationBarHighlight),
+    colorScheme: ColorScheme(
+        brightness: Brightness.light,
+        primary: AppColors.primary,
+        onPrimary: AppColors.secondary,
+        secondary: AppColors.navigationBar,
+        onSecondary: AppColors.navigationBarHighlight,
+        error: AppColors.headLineBorderColor,
+        onError: AppColors.headLineBorderColor,
+        surface: AppColors.headLineBorderColor,
+        onSurface: AppColors.darkNavigationBarHighlight),
     brightness: Brightness.light,
     primaryColor: AppColors.primary,
     scaffoldBackgroundColor: AppColors.primary,
-    
-    appBarTheme:  const AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.navigationBar,
-      
       titleTextStyle: TextStyle(
         color: AppColors.headLineFontColor,
         fontSize: 20,
@@ -25,7 +34,6 @@ class AppTheme {
       ),
       iconTheme: IconThemeData(color: AppColors.headLineFontColor),
     ),
-    
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: AppColors.navigationBar,
       selectedItemColor: AppColors.navigationBarHighlight,
@@ -55,10 +63,17 @@ class AppTheme {
 
   // Dark Theme
   static ThemeData darkTheme = ThemeData(
-        colorScheme: ColorScheme(brightness: Brightness.dark, primary: AppColors.darkPrimary, onPrimary: AppColors.darkSecondary, secondary: AppColors.darkNavigationBar, onSecondary: AppColors.darkNavigationBarHighlight, error: AppColors.darkFontColor, onError: AppColors.headLineBorderColor, surface: AppColors.headLineBorderColor, onSurface: AppColors.navigationBarHighlight),
-
+    colorScheme: ColorScheme(
+        brightness: Brightness.dark,
+        primary: AppColors.darkPrimary,
+        onPrimary: AppColors.darkSecondary,
+        secondary: AppColors.darkNavigationBar,
+        onSecondary: AppColors.darkNavigationBarHighlight,
+        error: AppColors.darkFontColor,
+        onError: AppColors.headLineBorderColor,
+        surface: AppColors.headLineBorderColor,
+        onSurface: AppColors.navigationBarHighlight),
     brightness: Brightness.dark,
-    
     primaryColor: AppColors.darkPrimary,
     scaffoldBackgroundColor: AppColors.darkPrimary,
     appBarTheme: const AppBarTheme(

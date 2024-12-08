@@ -1,9 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/providers/general_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'dart:math' as math;
 import 'package:intl/intl.dart';
 
 class AddEventView extends StatefulWidget {
@@ -97,7 +98,8 @@ class _AddEventViewState extends State<AddEventView> {
               ),
               Text(
                 playersCount.toString(),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               IconButton(
                 onPressed: () {
@@ -133,7 +135,8 @@ class _AddEventViewState extends State<AddEventView> {
                 initialTime: const TimeOfDay(hour: 12, minute: 0),
                 builder: (context, child) {
                   return MediaQuery(
-                    data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                    data: MediaQuery.of(context)
+                        .copyWith(alwaysUse24HourFormat: true),
                     child: child!,
                   );
                 },
@@ -152,7 +155,8 @@ class _AddEventViewState extends State<AddEventView> {
               setState(() {
                 selectedDateTime = combinedDateTime;
                 // Format "18 JUN 13:45"
-                String dateStr = DateFormat('d MMM').format(combinedDateTime).toUpperCase();
+                String dateStr =
+                    DateFormat('d MMM').format(combinedDateTime).toUpperCase();
                 String timeStr = DateFormat('HH:mm').format(combinedDateTime);
                 event.date = "$dateStr $timeStr";
               });
@@ -219,7 +223,7 @@ class _AddEventViewState extends State<AddEventView> {
               }
 
               try {
-                final uuid = const Uuid();
+                const uuid = Uuid();
                 await events.doc(uuid.v4()).set(
                   {
                     "sport": event.sport,

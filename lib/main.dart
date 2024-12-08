@@ -51,7 +51,7 @@ class KFUPMSportsApp extends StatelessWidget {
       home: const AuthWrapper(),
       routes: {
         '/home': (context) => const PagesView(),
-        '/login': (context) => LoginScreen(),
+        '/login': (context) => const LoginScreen(),
       },
     );
   }
@@ -79,7 +79,7 @@ class AuthWrapper extends StatelessWidget {
           return const PagesView();
         }
         // If the user is not logged in, show the login screen
-        return LoginScreen();
+        return const LoginScreen();
       },
     );
   }

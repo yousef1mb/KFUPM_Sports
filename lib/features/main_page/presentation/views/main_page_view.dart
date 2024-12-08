@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
@@ -85,8 +87,8 @@ class MainPageView extends StatelessWidget {
             itemCount: events.length,
             itemBuilder: (context, index) {
               final event = events[index].data() as Map<String, dynamic>;
-              final sport = event['sport'];
-              final player = event['player'];
+              final sport = event['sportName'];
+              final player = event["players"][0];
               final location = event['location'];
               final playersJoined = event['playersJoined'];
               final date = event['date'];
