@@ -85,8 +85,6 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                 return const Center(child: Text('No events found'));
               }
 
-              final events = snapshot.data!.docs;
-
               return ListView(
                 children: [
                   // Profile Picture and Name

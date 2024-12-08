@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
@@ -96,7 +98,8 @@ class _AddEventViewState extends State<AddEventView> {
                 onChanged: (value) {
                   setState(() {
                     final newCapacity = int.tryParse(value) ?? capacity;
-                    remainingCapacity = newCapacity - playersCount; // Update remaining capacity
+                    remainingCapacity =
+                        newCapacity - playersCount; // Update remaining capacity
                     capacity = newCapacity;
                   });
                 },
@@ -145,7 +148,8 @@ class _AddEventViewState extends State<AddEventView> {
                               event.playersJoined = playersCount.toString();
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Capacity reached!")),
+                                const SnackBar(
+                                    content: Text("Capacity reached!")),
                               );
                             }
                           });
