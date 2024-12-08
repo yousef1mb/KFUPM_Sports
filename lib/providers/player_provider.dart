@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class PlayerProvider with ChangeNotifier {
+  //This class takes a userID for example 201926470 and then do all the below functions based on this ID
+  //This function also uses the player data model to save related info
+  //and uses getter to get all player data
   final String userId;
-
   PlayerProvider({required this.userId});
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -12,7 +14,7 @@ class PlayerProvider with ChangeNotifier {
   Map<String, dynamic> _playerData = {};
   Map<String, dynamic> get playerData => _playerData;
 
-  /// Fetch player data from (players collection in firebase)
+  /// Fetch current player/user data from (players collection in firebase)
   Future<void> fetchPlayerData() async {
     try {
       final doc = await _firestore.collection('players').doc(userId).get();
@@ -26,7 +28,7 @@ class PlayerProvider with ChangeNotifier {
     }
   }
 
-  /// Save or update player data in players collection
+  /// Save or update current player/user data in players collection
   Future<void> savePlayerData(Map<String, dynamic> data) async {
     try {
       await _firestore
