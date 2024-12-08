@@ -104,7 +104,7 @@ class EventsPageView extends StatelessWidget {
                   MatchCard(
                     event: eventObject,
                     screenWidth: MediaQuery.of(context).size.width,
-                    joined: true,
+                    joined: false,
                   ),
                   const SizedBox(height: 16),
                 ],

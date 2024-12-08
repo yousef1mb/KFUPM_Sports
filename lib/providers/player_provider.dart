@@ -47,10 +47,17 @@ class PlayerProvider with ChangeNotifier {
   /// Add a match to the player's matches array in playerMatches collection
   Future<void> addMatchToPlayer(String matchId) async {
     try {
+      // Create a reference to the match document in the `events` collection
+      final matchRef = _firestore.collection('events').doc(matchId);
+
+      // Update the player's matches array with the reference
       await _firestore.collection('playerMatches').doc(userId).update({
-        'matches': FieldValue.arrayUnion([matchId]),
+        'matches': FieldValue.arrayUnion([matchRef]),
       });
-      _matches.add({'id': matchId});
+
+      // Locally add the match reference for state updates or UI
+      _matches
+          .add({'id': matchRef.path}); // Store the reference path for local use
       notifyListeners();
     } catch (e) {
       debugPrint('Error adding match: $e');

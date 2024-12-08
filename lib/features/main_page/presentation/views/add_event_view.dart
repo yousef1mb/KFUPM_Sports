@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:kfupm_sports/providers/player_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
@@ -45,7 +46,7 @@ class _AddEventViewState extends State<AddEventView> {
   @override
   Widget build(BuildContext context) {
     final event = Provider.of<GeneralProvider>(context, listen: false).event;
-
+    final playerProvider = Provider.of<PlayerProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFE2B56F),
@@ -247,7 +248,8 @@ class _AddEventViewState extends State<AddEventView> {
                 }
                 try {
                   const uuid = Uuid();
-                  await events.doc(uuid.v4()).set({
+                  String matchId = uuid.v4();
+                  await events.doc(matchId).set({
                     "sportName": event.sport,
                     "playersJoined": event.playersJoined,
                     "players": players, // Save players list to Firestore
@@ -257,6 +259,8 @@ class _AddEventViewState extends State<AddEventView> {
                     "date": event.date,
                     "location": event.location,
                   });
+
+                  await playerProvider.addMatchToPlayer(matchId);
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Event added successfully!")),
