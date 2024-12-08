@@ -1,110 +1,76 @@
-// ignore_for_file: use_build_context_synchronously
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:kfupm_sports/core/theme/app_colors.dart';
-import 'package:kfupm_sports/features/authentication/auth_screen.dart';
-import 'package:kfupm_sports/providers/auth_provider.dart';
-import 'package:kfupm_sports/providers/theme_provider.dart';
+import 'package:kfupm_sports/providers/player_provider.dart';
+import 'package:kfupm_sports/providers/uuid_provider.dart';
 import 'package:provider/provider.dart';
 
-class ProfilePageView extends StatefulWidget {
+class ProfilePageView extends StatelessWidget {
   const ProfilePageView({super.key});
 
   @override
-  State<ProfilePageView> createState() => _ProfilePageViewState();
-}
-
-class _ProfilePageViewState extends State<ProfilePageView> {
-  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-  @override
   Widget build(BuildContext context) {
-    //providers
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final authProvider =
-        Provider.of<AuthenticationProvider>(context, listen: false);
+    // Get the KFUPM ID from UserProvider
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final kfupmId = userProvider.kfupmId;
 
-    return Scaffold(
-      //appBar should be refactored
-      appBar: AppBar(
-        backgroundColor: AppColors.navigationBar,
-        title: const Text(
-          "Profile",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+    return ChangeNotifierProxyProvider<UserProvider, PlayerProvider>(
+      create: (_) => PlayerProvider(userId: kfupmId ?? "placeholder"),
+      update: (context, userProvider, previous) =>
+          PlayerProvider(userId: userProvider.kfupmId ?? "placeholder"),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Profile",
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.dark_mode_outlined),
-          onPressed: () {
-            themeProvider.toggleTheme();
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            onPressed: () async {
-              // Logout logic
-              await authProvider.logout();
+        body: Consumer<PlayerProvider>(
+          builder: (context, playerProvider, _) {
+            // Trigger data fetch if not already done
+            if (playerProvider.playerData.isEmpty) {
+              playerProvider.fetchPlayerData();
+            }
 
-              // Show Snackbar to confirm logout
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('You have been logged out')),
+            // Loading state
+            if (playerProvider.playerData.isEmpty) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
+            }
 
-              // Navigate back to the login screen
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder(
-            future: firebaseFirestore.collection("players").get(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                    child: CircularProgressIndicator(color: Colors.green));
-              }
+            // Error handling (if needed)
+            final playerData = playerProvider.playerData;
 
-              if (snapshot.hasError) {
-                return const Center(
-                    child: Text('Please make sure to connect to the Internet'));
-              }
-
-              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return const Center(child: Text('No events found'));
-              }
-
-              return ListView(
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView(
                 children: [
-                  // Profile Picture and Name
-                  const CircleAvatar(
+                  // Profile Picture
+                  CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.green,
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: 50,
-                    ),
+                    backgroundImage: playerData['profilePicture'] != null
+                        ? NetworkImage(playerData['profilePicture'])
+                        : null,
+                    child: playerData['profilePicture'] == null
+                        ? const Icon(Icons.person,
+                            size: 50, color: Colors.white)
+                        : null,
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    "Saud",
-                    style: TextStyle(
+
+                  // User Name
+                  Text(
+                    playerData['name'] ?? 'Unknown User',
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
 
-                  // Line above Bio
+                  // Divider
                   const Divider(),
 
                   // Bio Section
@@ -112,21 +78,21 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Bio",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    "Hi, this is Abdulrahman. I play Volleyball 🏐 since I was five 👶. National Athlete 💪. Hit me up if you would like to play a worthy opponent 🔥.",
-                    textAlign: TextAlign.center,
+                  Text(
+                    playerData['bio'] ?? 'No bio available.',
+                    textAlign: TextAlign.left,
                   ),
 
-                  // Line below Bio description
+                  // Divider
                   const Divider(),
 
+                  // Favorite Sports
                   const SizedBox(height: 16),
-
-                  // Favorite Sports Section
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -137,51 +103,16 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
-                    children: [
-                      Chip(
-                        label: const Text("🏐 Volleyball"),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: const BorderSide(
-                              color: AppColors.navigationBar), // Border only
-                        ),
-                        backgroundColor: const Color(0xFFE2B56F),
-                      ),
-                      Chip(
-                        label: const Text(
-                          "🏀 Basketball",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: const BorderSide(color: Colors.grey),
-                        ),
-                        backgroundColor:
-                            Theme.of(context).colorScheme.onSecondary,
-                      ),
-                      Chip(
-                        label: const Text("🏸 Badminton"),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side:
-                              const BorderSide(color: AppColors.navigationBar),
-                        ),
-                        backgroundColor: const Color(0xFFE2B56F),
-                      ),
-                      Chip(
-                        label: const Text("⚽ Football"),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side:
-                              const BorderSide(color: AppColors.navigationBar),
-                        ),
-                        backgroundColor: const Color(0xFFE2B56F),
-                      ),
-                    ],
+                    children:
+                        (playerData['favoriteSports'] as List<dynamic>? ?? [])
+                            .map((sport) => Chip(
+                                  label: Text(sport),
+                                ))
+                            .toList(),
                   ),
-                  const SizedBox(height: 16),
 
-                  // Preferred Positions Section
+                  // Preferred Positions
+                  const SizedBox(height: 16),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -192,44 +123,19 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
-                    children: [
-                      Chip(
-                        label: const Text(
-                          "🏐 Middle Blocker",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: const BorderSide(color: Colors.grey),
-                        ),
-                        backgroundColor:
-                            Theme.of(context).colorScheme.onSecondary,
-                      ),
-                      Chip(
-                        label: const Text("🏀 Center"),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side:
-                              const BorderSide(color: AppColors.navigationBar),
-                        ),
-                        backgroundColor: const Color(0xFFE2B56F),
-                      ),
-                      Chip(
-                        label: const Text("R Wing"),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side:
-                              const BorderSide(color: AppColors.navigationBar),
-                        ),
-                        backgroundColor: const Color(0xFFE2B56F),
-                      ),
-                    ],
+                    children:
+                        (playerData['preferredPositions'] as List<dynamic>? ??
+                                [])
+                            .map((position) => Chip(
+                                  label: Text(position),
+                                ))
+                            .toList(),
                   ),
                 ],
-              );
-            }),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

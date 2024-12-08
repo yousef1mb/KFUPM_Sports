@@ -2,19 +2,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class PlayerProvider with ChangeNotifier {
-  //This class takes a userID for example 201926470 and then do all the below functions based on this ID
-  //This function also uses the player data model to save related info
-  //and uses getter to get all player data
   final String userId;
   PlayerProvider({required this.userId});
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Player data model (for demonstration purposes, adjust as needed)
+  // Player data model
   Map<String, dynamic> _playerData = {};
   Map<String, dynamic> get playerData => _playerData;
 
-  /// Fetch current player/user data from (players collection in firebase)
+  // Matches data model
+  List<Map<String, dynamic>> _matches = [];
+  List<Map<String, dynamic>> get matches => _matches;
+
+  /// Fetch current player/user data from players collection in Firestore
   Future<void> fetchPlayerData() async {
     try {
       final doc = await _firestore.collection('players').doc(userId).get();
@@ -49,7 +50,7 @@ class PlayerProvider with ChangeNotifier {
       await _firestore.collection('playerMatches').doc(userId).update({
         'matches': FieldValue.arrayUnion([matchId]),
       });
-      _playerData['matches'] = [...?_playerData['matches'], matchId];
+      _matches.add({'id': matchId});
       notifyListeners();
     } catch (e) {
       debugPrint('Error adding match: $e');
@@ -63,9 +64,7 @@ class PlayerProvider with ChangeNotifier {
       await _firestore.collection('playerMatches').doc(userId).update({
         'matches': FieldValue.arrayRemove([matchId]),
       });
-      _playerData['matches'] = (_playerData['matches'] as List)
-          .where((id) => id != matchId)
-          .toList();
+      _matches = _matches.where((match) => match['id'] != matchId).toList();
       notifyListeners();
     } catch (e) {
       debugPrint('Error removing match: $e');
@@ -73,33 +72,22 @@ class PlayerProvider with ChangeNotifier {
     }
   }
 
-  /// Add a match to the player's matches array in playerMatches collection
-  Future<void> addInviteToPlayer(String invID) async {
+  /// Fetch current player matches from playerMatches collection in Firestore
+  Future<void> fetchPlayerMatches() async {
     try {
-      await _firestore.collection('playerInvitations').doc(userId).update({
-        'invitations': FieldValue.arrayUnion([invID]),
-      });
-      _playerData['invitations'] = [...?_playerData['invitations'], invID];
-      notifyListeners();
+      final doc =
+          await _firestore.collection('playerMatches').doc(userId).get();
+      if (doc.exists) {
+        final data = doc.data();
+        if (data != null && data['matches'] != null) {
+          // Assuming `matches` is an array of match documents with their details
+          _matches = List<Map<String, dynamic>>.from(data['matches']);
+          notifyListeners();
+        }
+      }
     } catch (e) {
-      debugPrint('Error adding invitations: $e');
-      throw Exception('Failed to add invitations');
-    }
-  }
-
-  /// Remove a match from the player's matches array in playerMatches collection
-  Future<void> removeInvitationsFromPlayer(String invID) async {
-    try {
-      await _firestore.collection('playerInvitations').doc(userId).update({
-        'invitations': FieldValue.arrayRemove([invID]),
-      });
-      _playerData['invitations'] = (_playerData['invitations'] as List)
-          .where((id) => id != invID)
-          .toList();
-      notifyListeners();
-    } catch (e) {
-      debugPrint('Error removing invitations: $e');
-      throw Exception('Failed to remove invitations');
+      debugPrint('Error fetching player matches: $e');
+      throw Exception('Failed to fetch player matches');
     }
   }
 }
