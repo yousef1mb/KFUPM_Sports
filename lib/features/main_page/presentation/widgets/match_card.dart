@@ -1,19 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/models/event_model.dart';
-import 'package:uuid/uuid.dart';
-import 'dart:math' as math; // For min()
+import 'dart:math' as math;
 
 class MatchCard extends StatefulWidget {
   final Event event;
   final double screenWidth;
   final bool joined;
 
-  const MatchCard(
-      {super.key,
-      required this.event,
-      required this.screenWidth,
-      this.joined = false});
+  const MatchCard({
+    super.key,
+    required this.event,
+    required this.screenWidth,
+    this.joined = false,
+  });
 
   @override
   State<MatchCard> createState() => _MatchCardState();
@@ -25,7 +25,6 @@ class _MatchCardState extends State<MatchCard> {
   @override
   void initState() {
     super.initState();
-    // Initialize the `joined` state with the value passed from the widget
     joined = widget.joined;
   }
 
@@ -36,48 +35,32 @@ class _MatchCardState extends State<MatchCard> {
 
     double cardHeight;
     if (screenWidth < 600) {
-      // If screen width is less than 600, use a taller ratio
-      cardHeight = cardWidth * 0.34; // adjust as needed
+      cardHeight = cardWidth * 0.34;
     } else if (screenWidth < 1000) {
-      // If screen width is 1000 or more, use a shorter ratio
-      cardHeight = cardWidth * 0.25; // adjust as needed
+      cardHeight = cardWidth * 0.25;
     } else {
-      // If screen width is 600 or more, use a shorter ratio
-      cardHeight = cardWidth * 0.19; // adjust as needed
+      cardHeight = cardWidth * 0.19;
     }
 
-    // Optionally clamp the height to not exceed 425
     cardHeight = math.min(cardHeight, 425);
 
-    double fontSizeFactor = screenWidth / 465.0;
-    if (fontSizeFactor > 1.0) {
-      fontSizeFactor = 1.0 + (fontSizeFactor - 1.0) * 0.3;
+    // Determine the image path based on the sport
+    String getImagePath(String sport) {
+      switch (sport.toLowerCase()) {
+        case 'football':
+          return 'assets/images/football.jpeg';
+        case 'volleyball':
+          return 'assets/images/volleyball.jpeg';
+        case 'basketball':
+          return 'assets/images/basketball.jpg';
+        case 'tennis':
+          return 'assets/images/tennis.jpg';
+        default:
+          return 'assets/images/black.jpg';
+      }
     }
 
-    const double titleBaseSize = 24;
-    const double iconBaseSize = 40;
-    const double playerNameBaseSize = 22;
-    const double playersJoinedBaseSize = 18;
-    const double dateAndLocationBaseSize = 16;
-    const double buttonBaseSize = 16;
-
-    double titleFontSize = titleBaseSize * fontSizeFactor;
-    double iconSize = iconBaseSize * fontSizeFactor;
-    double playerNameFontSize = playerNameBaseSize * fontSizeFactor;
-    double playersJoinedFontSize = playersJoinedBaseSize * fontSizeFactor;
-    double dateAndLocationFontSize = dateAndLocationBaseSize * fontSizeFactor;
-    double buttonFontSize = buttonBaseSize * fontSizeFactor;
-
-    double lineSpacing = 4 * fontSizeFactor;
-    double basePadding = 12;
-    double dynamicPadding = basePadding + (screenWidth * 0.001);
-
-    double iconSportTop = dynamicPadding;
-    double iconSportLeft = dynamicPadding;
-    double nameTop = iconSportTop + (titleFontSize * 1.2) + (lineSpacing * 2);
-    double nameLeft = dynamicPadding;
-    double bottomLeftPadding = dynamicPadding;
-    double bottomRightPadding = dynamicPadding + 4;
+    final String backgroundImage = getImagePath(widget.event.sport);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -88,101 +71,86 @@ class _MatchCardState extends State<MatchCard> {
           elevation: 4,
           child: Stack(
             children: [
+              // Background Image
               ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
-                child: ColorFiltered(
-                  colorFilter: widget.event.imageUrl ==
-                          "assets/images/black.jpg"
-                      ? const ColorFilter.mode(Colors.white, BlendMode.clear)
-                      : const ColorFilter.mode(Colors.white, BlendMode.color),
-                  child: Image.asset(
-                    widget.event.imageUrl,
-                    fit: BoxFit.cover,
-                    width: cardWidth,
-                    height: cardHeight,
-                  ),
+                child: Image.asset(
+                  backgroundImage,
+                  fit: BoxFit.cover,
+                  width: cardWidth,
+                  height: cardHeight,
                 ),
               ),
 
-              // Icon + Sport top-left
+              // Sport Name and Icon
               Positioned(
-                top: iconSportTop,
-                left: iconSportLeft,
+                top: 12,
+                left: 12,
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.person,
-                      size: iconSize,
+                      Icons.sports,
+                      size: 24,
                       color: Colors.white,
                     ),
-                    SizedBox(width: 16 * fontSizeFactor),
+                    const SizedBox(width: 8),
                     Text(
                       widget.event.sport,
-                      style: TextStyle(
-                        fontSize: titleFontSize,
+                      style: const TextStyle(
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
 
-              // Name two lines under icon+sport
+              // Player Name
               Positioned(
-                top: nameTop,
-                left: nameLeft,
+                top: 48,
+                left: 12,
                 child: Text(
                   widget.event.player,
-                  style: TextStyle(
-                    fontSize: playerNameFontSize,
+                  style: const TextStyle(
+                    fontSize: 18,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
 
-              // PlayersJoined, Date & Location bottom-left
+              // Players Joined, Date, and Location
               Positioned(
-                left: bottomLeftPadding,
-                bottom: bottomLeftPadding,
+                left: 12,
+                bottom: 12,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.event.playersJoined,
-                      style: TextStyle(
-                        fontSize: playersJoinedFontSize,
+                      'Players: ${widget.event.playersJoined}',
+                      style: const TextStyle(
+                        fontSize: 16,
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: lineSpacing),
+                    const SizedBox(height: 4),
                     Row(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           widget.event.date,
-                          style: TextStyle(
-                            fontSize: dateAndLocationFontSize,
+                          style: const TextStyle(
+                            fontSize: 14,
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(width: lineSpacing),
+                        const SizedBox(width: 8),
                         Text(
                           widget.event.location,
-                          style: TextStyle(
-                            fontSize: dateAndLocationFontSize,
+                          style: const TextStyle(
+                            fontSize: 14,
                             color: Colors.white,
-                            fontWeight: FontWeight.bold,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -190,26 +158,68 @@ class _MatchCardState extends State<MatchCard> {
                 ),
               ),
 
-              // Join button bottom-right
+              // Join Button
               Positioned(
-                right: bottomRightPadding,
-                bottom: bottomRightPadding,
+                right: 12,
+                bottom: 12,
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     setState(() {
-                      final firebaseFirestore =
-                          FirebaseFirestore.instance.collection("user_matches");
-                      Uuid uuid = const Uuid();
                       joined = !joined;
-                      firebaseFirestore.doc("event: ${uuid.v4()}").set({});
                     });
+
+                    try {
+                      // Fetch the event ID from Firestore
+                      final QuerySnapshot snapshot = await FirebaseFirestore
+                          .instance
+                          .collection('events')
+                          .where('sportName', isEqualTo: widget.event.sport)
+                          .where('date', isEqualTo: widget.event.date)
+                          .where('location', isEqualTo: widget.event.location)
+                          .limit(1)
+                          .get();
+
+                      if (snapshot.docs.isNotEmpty) {
+                        final eventId = snapshot.docs.first.id;
+
+                        // Update user_matches with the eventId
+                        await FirebaseFirestore.instance
+                            .collection("user_matches")
+                            .doc(eventId)
+                            .set({
+                          "eventId": eventId,
+                          "sport": widget.event.sport,
+                          "joined": joined,
+                          "playerName": widget.event.player,
+                        });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(joined
+                                ? "Successfully joined!"
+                                : "Successfully left!"),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Event not found!")),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Error: $e")),
+                      );
+                    }
                   },
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
-                      color:
-                          joined ? Colors.lightGreen : const Color(0xFFE7B86D),
+                      color: joined
+                          ? Colors.lightGreen
+                          : const Color(0xFFE7B86D),
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Text(
@@ -217,7 +227,7 @@ class _MatchCardState extends State<MatchCard> {
                       style: TextStyle(
                         color: joined ? Colors.white : Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: buttonFontSize,
+                        fontSize: 16,
                       ),
                     ),
                   ),

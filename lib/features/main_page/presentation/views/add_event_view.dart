@@ -14,13 +14,9 @@ class AddEventView extends StatefulWidget {
 
 class _AddEventViewState extends State<AddEventView> {
   CollectionReference events = FirebaseFirestore.instance.collection("events");
-  final List<String> sports = [
-    'football',
-    'volleyball',
-    'basketball',
-    'Tennis'
-  ];
+  final List<String> sports = ['Football', 'Volleyball', 'Basketball', 'Tennis'];
   final List<String> locations = ['11', '36', '39'];
+  List<String> players = []; // List of players
   DateTime? selectedDateTime;
   int playersCount = 0;
   int capacity = 18; // Default total capacity
@@ -30,9 +26,12 @@ class _AddEventViewState extends State<AddEventView> {
   void initState() {
     super.initState();
     final event = Provider.of<GeneralProvider>(context, listen: false).event;
-    playersCount = int.tryParse(event.playersJoined) ?? 0;
-    remainingCapacity =
-        capacity - playersCount; // Initialize remaining capacity
+
+    // Add current user as the first player
+    players.add(event.player);
+
+    playersCount = players.length; // Initialize players count
+    remainingCapacity = capacity - playersCount; // Initialize remaining capacity
   }
 
   @override
@@ -119,9 +118,10 @@ class _AddEventViewState extends State<AddEventView> {
                       IconButton(
                         onPressed: () {
                           setState(() {
-                            if (playersCount > 0) {
+                            if (playersCount > 1) {
                               playersCount--;
                               remainingCapacity++; // Increase remaining capacity
+                              players.removeLast(); // Remove last guest
                               event.playersJoined = playersCount.toString();
                             }
                           });
@@ -141,6 +141,7 @@ class _AddEventViewState extends State<AddEventView> {
                             if (remainingCapacity > 0) {
                               playersCount++;
                               remainingCapacity--; // Decrease remaining capacity
+                              players.add("guest_$playersCount"); // Add guest
                               event.playersJoined = playersCount.toString();
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -203,8 +204,7 @@ class _AddEventViewState extends State<AddEventView> {
                     String dateStr = DateFormat('d MMM')
                         .format(combinedDateTime)
                         .toUpperCase();
-                    String timeStr =
-                        DateFormat('HH:mm').format(combinedDateTime);
+                    String timeStr = DateFormat('HH:mm').format(combinedDateTime);
                     event.date = "$dateStr $timeStr";
                   });
                 },
@@ -237,14 +237,13 @@ class _AddEventViewState extends State<AddEventView> {
                 try {
                   const uuid = Uuid();
                   await events.doc(uuid.v4()).set({
-                    "sport": event.sport,
-                    "player": event.player,
+                    "sportName": event.sport,
                     "playersJoined": event.playersJoined,
+                    "players": players, // Save players list to Firestore
                     "capacity": capacity.toString(),
-                    "remainingCapacity": remainingCapacity.toString(),
+                    "remainingCapacity": remainingCapacity.toString(), // Save remaining capacity
                     "date": event.date,
                     "location": event.location,
-                    "imageUrl": event.imageUrl,
                   });
 
                   ScaffoldMessenger.of(context).showSnackBar(

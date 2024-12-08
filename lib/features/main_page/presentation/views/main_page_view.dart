@@ -92,14 +92,15 @@ class MainPageView extends StatelessWidget {
               final location = event['location'];
               final playersJoined = event['playersJoined'];
               final date = event['date'];
-              final imageUrl = event['imageUrl'];
+              final remainingCapacity = event['remainingCapacity'];
+
               Event eventObject = Event(
                   sport: sport,
                   player: player,
                   playersJoined: playersJoined,
                   date: date,
                   location: location,
-                  imageUrl: imageUrl);
+                  );
               return Column(
                 children: [
                   MatchCard(

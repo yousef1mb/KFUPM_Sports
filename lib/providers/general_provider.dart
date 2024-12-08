@@ -9,7 +9,6 @@ class GeneralProvider extends ChangeNotifier {
     playersJoined: '0',
     date: 'TBA',
     location: 'TBA',
-    imageUrl: 'assets/images/black.jpg',
   );
   Player player = Player(
     name: "Unknown",

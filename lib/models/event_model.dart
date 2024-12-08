@@ -4,7 +4,6 @@ class Event {
   String playersJoined;
   String date;
   String location;
-  String imageUrl;
 
   Event({
     required this.sport,
@@ -12,6 +11,5 @@ class Event {
     required this.playersJoined,
     required this.date,
     required this.location,
-    required this.imageUrl,
   });
 }

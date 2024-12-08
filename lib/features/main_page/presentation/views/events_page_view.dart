@@ -89,15 +89,16 @@ class EventsPageView extends StatelessWidget {
               final player = event['players'][0];
               final location = event['location'];
               final playersJoined = event['playersJoined'];
+              final remainingCapacity = event['remainingCapacity'];
               final date = event['date'];
-              final imageUrl = event['imageUrl'];
+
               Event eventObject = Event(
                   sport: sport,
                   player: player,
                   playersJoined: playersJoined,
                   date: date,
                   location: location,
-                  imageUrl: imageUrl);
+              );
               return Column(
                 children: [
                   MatchCard(
