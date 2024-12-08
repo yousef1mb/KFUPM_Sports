@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:kfupm_sports/providers/general_provider.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'features/authentication/auth_screen.dart';
+import 'features/authentication/user_info_form_screen.dart';
 import 'firebase_options.dart';
 import 'providers/auth_provider.dart';
 
@@ -57,29 +59,53 @@ class KFUPMSportsApp extends StatelessWidget {
   }
 }
 
-/// AuthWrapper checks if the user is logged in
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final authenticationProvider =
-        Provider.of<AuthenticationProvider>(context, listen: false);
-
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show a loading indicator while waiting for authentication state
           return const Center(child: CircularProgressIndicator());
         }
-        if (snapshot.hasData) {
-          // If the user is logged in, show the main app
-          authenticationProvider.user != null; // Ensure user is updated
-          return const PagesView();
+
+        if (!snapshot.hasData) {
+          // No user is logged in
+          debugPrint('No user logged in.');
+          return const LoginScreen();
         }
-        // If the user is not logged in, show the login screen
-        return const LoginScreen();
+
+        final user = snapshot.data!;
+        return FutureBuilder<DocumentSnapshot>(
+          future: FirebaseFirestore.instance
+              .collection('players')
+              .doc(user.uid)
+              .get(),
+          builder: (context, userSnapshot) {
+            if (userSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (userSnapshot.hasError) {
+              debugPrint(
+                  'Error loading Firestore document: ${userSnapshot.error}');
+              return const Center(child: Text('Error loading user data.'));
+            }
+
+            final data = userSnapshot.data;
+
+            // Check if the document does not exist
+            if (data == null || !data.exists) {
+              debugPrint('No document found for user: ${user.uid}');
+              return const UserInfoFormScreen();
+            }
+
+            debugPrint('Profile is complete for user: ${user.uid}');
+            return const PagesView();
+          },
+        );
       },
     );
   }

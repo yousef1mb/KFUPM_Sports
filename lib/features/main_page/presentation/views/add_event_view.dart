@@ -14,7 +14,12 @@ class AddEventView extends StatefulWidget {
 
 class _AddEventViewState extends State<AddEventView> {
   CollectionReference events = FirebaseFirestore.instance.collection("events");
-  final List<String> sports = ['football', 'volleyball', 'basketball', 'Tennis'];
+  final List<String> sports = [
+    'football',
+    'volleyball',
+    'basketball',
+    'Tennis'
+  ];
   final List<String> locations = ['11', '36', '39'];
   DateTime? selectedDateTime;
   int playersCount = 0;
@@ -26,7 +31,8 @@ class _AddEventViewState extends State<AddEventView> {
     super.initState();
     final event = Provider.of<GeneralProvider>(context, listen: false).event;
     playersCount = int.tryParse(event.playersJoined) ?? 0;
-    remainingCapacity = capacity - playersCount; // Initialize remaining capacity
+    remainingCapacity =
+        capacity - playersCount; // Initialize remaining capacity
   }
 
   @override
@@ -178,8 +184,8 @@ class _AddEventViewState extends State<AddEventView> {
                     String dateStr = DateFormat('d MMM')
                         .format(combinedDateTime)
                         .toUpperCase();
-                    String timeStr = DateFormat('HH:mm')
-                        .format(combinedDateTime);
+                    String timeStr =
+                        DateFormat('HH:mm').format(combinedDateTime);
                     event.date = "$dateStr $timeStr";
                   });
                 },

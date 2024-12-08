@@ -3,13 +3,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
+import 'package:kfupm_sports/features/authentication/auth_screen.dart';
+import 'package:kfupm_sports/providers/auth_provider.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
+<<<<<<< Updated upstream
 import '../../../../providers/auth_provider.dart';
 import '../../../authentication/auth_screen.dart';
 
 class ProfilePageView extends StatefulWidget {
+=======
+class ProfilePageView extends StatelessWidget {
+>>>>>>> Stashed changes
   const ProfilePageView({super.key});
 
   @override
@@ -20,10 +26,13 @@ class _ProfilePageViewState extends State<ProfilePageView> {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
+    //providers
     final themeProvider = Provider.of<ThemeProvider>(context);
     final authProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
+
     return Scaffold(
+      //appBar should be refactored
       appBar: AppBar(
         backgroundColor: AppColors.navigationBar,
         title: const Text(
@@ -63,6 +72,7 @@ class _ProfilePageViewState extends State<ProfilePageView> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
+<<<<<<< Updated upstream
         child: FutureBuilder(
             future: firebaseFirestore.collection("players").get(),
             builder: (context, snapshot) {
@@ -70,6 +80,25 @@ class _ProfilePageViewState extends State<ProfilePageView> {
                 return const Center(
                     child: CircularProgressIndicator(color: Colors.green));
               }
+=======
+        child: ListView(
+          children: [
+            // Profile Picture and Name
+            const CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.green,
+            ),
+            const SizedBox(height: 12),
+            //needs to be centered
+            const Text(
+              'Abdulrahman AlNasser',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 12),
+>>>>>>> Stashed changes
 
               if (snapshot.hasError) {
                 return const Center(

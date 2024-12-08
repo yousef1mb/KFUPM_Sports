@@ -24,7 +24,7 @@ class EventsPageView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.dark_mode_outlined,
           ),
           onPressed: () {

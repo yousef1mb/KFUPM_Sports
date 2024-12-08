@@ -61,8 +61,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         _emailController.text.trim(),
                         _passwordController.text.trim(),
                       );
-                      // Navigate to the home page
-                      Navigator.pushReplacementNamed(context, '/home');
                     } catch (e) {
                       // Show custom error message in Snackbar
                       ScaffoldMessenger.of(context).showSnackBar(
