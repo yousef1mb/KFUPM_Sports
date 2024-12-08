@@ -37,7 +37,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/Sounds/success.m4a
     - assets/images/black.jpg
     - assets/images/football.jpeg
     - assets/images/volleyball.jpeg
