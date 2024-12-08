@@ -1,11 +1,11 @@
 // ignore_for_file: use_build_context_synchronously, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
 import 'package:kfupm_sports/features/main_page/presentation/views/add_event_view.dart';
 import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
 import 'package:kfupm_sports/models/event_model.dart';
+import 'package:kfupm_sports/providers/match_provider.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +18,6 @@ class EventsPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     final authProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
     return Scaffold(
@@ -61,8 +60,8 @@ class EventsPageView extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: firebaseFirestore.collection('events').snapshots(),
+      body: StreamBuilder(
+        stream: Provider.of<MatchProvider>(context).getAllMatches(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -74,26 +73,26 @@ class EventsPageView extends StatelessWidget {
                 child: Text('Please make sure to connect to the Internet'));
           }
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('No events found'));
           }
 
-          final events = snapshot.data!.docs;
+          final events = snapshot.data!;
 
           return ListView.builder(
             padding: const EdgeInsets.all(16.0),
             itemCount: events.length,
             itemBuilder: (context, index) {
-              final event = events[index].data() as Map<String, dynamic>;
+              final event = events[0];
               final sport = event['sportName'];
-              final player = event['players'][0];
+              final players = event['players'];
               final location = event['location'];
               final playersJoined = event['playersJoined'];
               final date = event['date'];
               final imageUrl = event['imageUrl'];
               Event eventObject = Event(
                   sport: sport,
-                  player: player,
+                  player: players,
                   playersJoined: playersJoined,
                   date: date,
                   location: location,

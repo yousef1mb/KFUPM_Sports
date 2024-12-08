@@ -6,6 +6,7 @@ import 'package:kfupm_sports/core/theme/theme.dart';
 import 'package:kfupm_sports/features/main_page/presentation/views/page_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:kfupm_sports/providers/general_provider.dart';
+import 'package:kfupm_sports/providers/match_provider.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'features/authentication/auth_screen.dart';
@@ -32,6 +33,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => themeProvider),
         ChangeNotifierProvider(create: (_) => GeneralProvider()),
         ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
+        ChangeNotifierProvider(create: (_) => MatchProvider()),
       ],
       child: const KFUPMSportsApp(),
     ),
