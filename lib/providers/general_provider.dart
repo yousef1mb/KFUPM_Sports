@@ -6,7 +6,7 @@ class GeneralProvider extends ChangeNotifier {
   Event event = Event(
     sport: 'TBA',
     player: 'Uknown',
-    playersJoined: '0/22',
+    playersJoined: '0',
     date: 'TBA',
     location: 'TBA',
     imageUrl: 'assets/images/black.jpg',

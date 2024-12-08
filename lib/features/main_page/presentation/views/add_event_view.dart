@@ -24,7 +24,7 @@ class _AddEventViewState extends State<AddEventView> {
   DateTime? selectedDateTime;
   int playersCount = 0;
   int capacity = 18; // Default total capacity
-  int remainingCapacity = 18; // Tracks remaining capacity
+  int remainingCapacity = 18; // Remaining capacity (calculated dynamically)
 
   @override
   void initState() {
@@ -54,7 +54,6 @@ class _AddEventViewState extends State<AddEventView> {
           ListView(
             padding: const EdgeInsets.all(32),
             children: [
-              // Sport Name Dropdown
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(labelText: "Sport Name"),
                 items: sports.map((sport) {
@@ -68,64 +67,6 @@ class _AddEventViewState extends State<AddEventView> {
                     event.sport = value;
                   }
                 },
-              ),
-              const SizedBox(height: 16),
-
-              // Register Guests
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Register a Guest:",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 16),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        if (playersCount > 0) {
-                          playersCount--;
-                          remainingCapacity++; // Increase remaining capacity
-                          event.playersJoined = playersCount.toString();
-                        }
-                      });
-                    },
-                    icon: const Icon(Icons.remove),
-                  ),
-                  Text(
-                    playersCount.toString(),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        if (remainingCapacity > 0) {
-                          playersCount++;
-                          remainingCapacity--; // Decrease remaining capacity
-                          event.playersJoined = playersCount.toString();
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Capacity reached!")),
-                          );
-                        }
-                      });
-                    },
-                    icon: const Icon(Icons.add),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              // Remaining Capacity Display
-              TextFormField(
-                initialValue: remainingCapacity.toString(),
-                readOnly: true,
-                decoration: const InputDecoration(
-                  labelText: "Remaining Capacity",
-                ),
               ),
               const SizedBox(height: 16),
 
@@ -143,6 +84,84 @@ class _AddEventViewState extends State<AddEventView> {
                     event.location = value;
                   }
                 },
+              ),
+              const SizedBox(height: 16),
+
+              // Total Capacity Input Field
+              TextFormField(
+                initialValue: capacity.toString(),
+                decoration: const InputDecoration(
+                  labelText: "Total Capacity",
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    final newCapacity = int.tryParse(value) ?? capacity;
+                    remainingCapacity = newCapacity - playersCount; // Update remaining capacity
+                    capacity = newCapacity;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Register Guests and Remaining Capacity
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Register Guests
+                  Row(
+                    children: [
+                      const Text(
+                        "Register Guests:",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(width: 16),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            if (playersCount > 0) {
+                              playersCount--;
+                              remainingCapacity++; // Increase remaining capacity
+                              event.playersJoined = playersCount.toString();
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.remove),
+                      ),
+                      Text(
+                        playersCount.toString(),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            if (remainingCapacity > 0) {
+                              playersCount++;
+                              remainingCapacity--; // Decrease remaining capacity
+                              event.playersJoined = playersCount.toString();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Capacity reached!")),
+                              );
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.add),
+                      ),
+                    ],
+                  ),
+                  // Remaining Capacity
+                  Text(
+                    "Remaining: $remainingCapacity",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
 
@@ -221,6 +240,7 @@ class _AddEventViewState extends State<AddEventView> {
                     "sport": event.sport,
                     "player": event.player,
                     "playersJoined": event.playersJoined,
+                    "capacity": capacity.toString(),
                     "remainingCapacity": remainingCapacity.toString(),
                     "date": event.date,
                     "location": event.location,
