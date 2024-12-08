@@ -60,6 +60,7 @@ class _UserInfoFormScreenState extends State<UserInfoFormScreen> {
       };
 
       // Replace with Firebase Firestore save logic
+
       print(userData);
 
       // Navigate to the main app screen
