@@ -85,8 +85,8 @@ class EventsPageView extends StatelessWidget {
             itemCount: events.length,
             itemBuilder: (context, index) {
               final event = events[index].data() as Map<String, dynamic>;
-              final sport = event['sport'];
-              final player = event['player'];
+              final sport = event['sportName'];
+              final player = event['players'][0];
               final location = event['location'];
               final playersJoined = event['playersJoined'];
               final date = event['date'];
