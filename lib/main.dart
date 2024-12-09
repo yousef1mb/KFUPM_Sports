@@ -9,7 +9,7 @@ import 'package:kfupm_sports/providers/general_provider.dart';
 import 'package:kfupm_sports/providers/match_provider.dart';
 import 'package:kfupm_sports/providers/player_provider.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
-import 'package:kfupm_sports/providers/uuid_provider.dart';
+import 'package:kfupm_sports/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'features/authentication/auth_screen.dart';
 import 'features/authentication/user_info_form_screen.dart';
@@ -77,60 +77,59 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
+        // Show a loading indicator while checking auth state
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
 
+        // User is not logged in
         if (!snapshot.hasData) {
-          // No user is logged in
-          debugPrint('No user logged in.');
           return const LoginScreen();
         }
+
+        // User is logged in, proceed to initialize user data
         return FutureBuilder<void>(
-          future: userProvider.initializeKfupmId(), // Initialize KFUPM ID
-          builder: (context, kfupmSnapshot) {
-            if (kfupmSnapshot.connectionState == ConnectionState.waiting) {
+          future: Provider.of<UserProvider>(context, listen: false)
+              .initializeKfupmId(),
+          builder: (context, initSnapshot) {
+            if (initSnapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (kfupmSnapshot.hasError) {
-              debugPrint('Error initializing KFUPM ID: ${kfupmSnapshot.error}');
-              return const Center(child: Text('Error loading user data.'));
+            if (initSnapshot.hasError) {
+              return const Center(
+                  child: Text('Failed to initialize user data.'));
             }
 
-            // KFUPM ID is initialized, proceed to check user profile
+            // User data initialized, proceed with profile checks
             return FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance
                   .collection('players')
-                  .doc(userProvider.kfupmId)
+                  .doc(
+                      Provider.of<UserProvider>(context, listen: false).kfupmId)
                   .get(),
-              builder: (context, userSnapshot) {
-                if (userSnapshot.connectionState == ConnectionState.waiting) {
+              builder: (context, profileSnapshot) {
+                if (profileSnapshot.connectionState ==
+                    ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (userSnapshot.hasError) {
-                  debugPrint(
-                      'Error loading Firestore document: ${userSnapshot.error}');
-                  return const Center(child: Text('Error loading user data.'));
+                if (profileSnapshot.hasError) {
+                  return const Center(
+                      child: Text('Failed to load user profile.'));
                 }
 
-                final data = userSnapshot.data;
+                final data = profileSnapshot.data;
 
-                // Check if the document does not exist
+                // If user profile does not exist, redirect to UserInfoFormScreen
                 if (data == null || !data.exists) {
-                  debugPrint(
-                      'No document found for user: ${userProvider.kfupmId}');
                   return const UserInfoFormScreen();
                 }
 
-                debugPrint(
-                    'Profile is complete for user: ${userProvider.kfupmId}');
+                // If everything is fine, proceed to main app
                 return const PagesView();
               },
             );

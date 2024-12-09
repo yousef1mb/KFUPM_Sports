@@ -3,12 +3,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
-import 'package:kfupm_sports/features/authentication/auth_screen.dart';
 import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
+import 'package:kfupm_sports/main.dart';
 import 'package:kfupm_sports/models/event_model.dart';
 import 'package:kfupm_sports/providers/auth_provider.dart';
 import 'package:kfupm_sports/providers/match_provider.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
+import 'package:kfupm_sports/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class MainPageView extends StatelessWidget {
@@ -31,27 +32,6 @@ class MainPageView extends StatelessWidget {
             themeProvider.toggleTheme();
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            onPressed: () async {
-              // Logout logic
-              await authProvider.logout();
-
-              // Show Snackbar to confirm logout
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('You have been logged out')),
-              );
-
-              // Navigate back to the login screen
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
-            },
-          ),
-        ],
         backgroundColor: AppColors.navigationBar,
         title: const Text(
           "My Matches",

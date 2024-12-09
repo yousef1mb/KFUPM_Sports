@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:kfupm_sports/providers/uuid_provider.dart';
+import 'package:kfupm_sports/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class MatchProvider with ChangeNotifier {

@@ -4,11 +4,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AuthenticationProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  User? _user;
-  User? get user => _user;
+  User? _currentUser;
+  User? get currentUser => _currentUser;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  AuthenticationProvider() {
+    // Initialize user on provider creation
+    _auth.authStateChanges().listen((user) {
+      _currentUser = user;
+      notifyListeners();
+    });
+  }
 
   Future<void> login(String email, String password) async {
     _isLoading = true;
@@ -18,22 +26,9 @@ class AuthenticationProvider with ChangeNotifier {
         email: email,
         password: password,
       );
-      _user = userCredential.user;
-    } on FirebaseAuthException catch (e) {
-      // Handle specific FirebaseAuth exceptions
-      if (e.code == 'user-not-found') {
-        throw 'No user found for the entered email.';
-      } else if (e.code == 'wrong-password') {
-        throw 'Incorrect password. Please try again.';
-      } else if (e.code == 'invalid-email') {
-        throw 'The email address is not valid.';
-      } else if (e.code == 'user-disabled') {
-        throw 'This user account has been disabled.';
-      } else {
-        throw 'An error occurred. Please try again.';
-      }
+      _currentUser = userCredential.user;
     } catch (e) {
-      throw 'An unexpected error occurred: $e';
+      rethrow; // Let the caller handle the error
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -43,10 +38,11 @@ class AuthenticationProvider with ChangeNotifier {
   Future<void> logout() async {
     try {
       await _auth.signOut();
-      _user = null;
-      notifyListeners();
+      _currentUser = null;
     } catch (e) {
-      throw e.toString();
+      rethrow; // Let the caller handle the error
+    } finally {
+      notifyListeners();
     }
   }
 }

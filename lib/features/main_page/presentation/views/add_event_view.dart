@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 import '../../../../providers/general_provider.dart';
 import '../../../../providers/player_provider.dart';
-import '../../../../providers/uuid_provider.dart';
+import '../../../../providers/user_provider.dart';
 
 class AddEventView extends StatefulWidget {
   const AddEventView({super.key});

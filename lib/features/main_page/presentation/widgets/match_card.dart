@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:kfupm_sports/models/event_model.dart';
 import 'dart:math' as math;
 import 'package:provider/provider.dart';
-import 'package:kfupm_sports/providers/uuid_provider.dart';
+import 'package:kfupm_sports/providers/user_provider.dart';
 
 class MatchCard extends StatefulWidget {
   final Event event;

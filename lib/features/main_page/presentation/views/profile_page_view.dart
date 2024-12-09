@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:kfupm_sports/main.dart';
+import 'package:kfupm_sports/providers/auth_provider.dart';
 import 'package:kfupm_sports/providers/player_provider.dart';
-import 'package:kfupm_sports/providers/uuid_provider.dart';
+import 'package:kfupm_sports/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePageView extends StatelessWidget {
@@ -8,6 +10,8 @@ class ProfilePageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
     // Get the KFUPM ID from UserProvider
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     final kfupmId = userProvider.kfupmId;
@@ -23,6 +27,38 @@ class ProfilePageView extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              tooltip: 'Logout',
+              onPressed: () async {
+                try {
+                  // Show a loading indicator or disable the button while processing
+                  await authProvider.logout();
+
+                  Provider.of<UserProvider>(context, listen: false)
+                      .clearKfupmId();
+
+                  // Show Snackbar to confirm logout
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('You have been logged out')),
+                  );
+
+                  // Navigate to the login screen and remove all previous routes
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => const AuthWrapper()),
+                    (route) => false,
+                  );
+                } catch (e) {
+                  // Show error message if logout fails
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Logout failed: $e')),
+                  );
+                }
+              },
+            ),
+          ],
         ),
         body: Consumer<PlayerProvider>(
           builder: (context, playerProvider, _) {
