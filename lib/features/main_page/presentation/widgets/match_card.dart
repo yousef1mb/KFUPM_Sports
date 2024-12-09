@@ -2,15 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/models/event_model.dart';
 import 'dart:math' as math;
+import 'package:provider/provider.dart';
+import 'package:kfupm_sports/providers/uuid_provider.dart';
 
 class MatchCard extends StatefulWidget {
   final Event event;
+  final DocumentReference eventReference; // Add event reference
   final double screenWidth;
   final bool joined;
 
   const MatchCard({
     super.key,
     required this.event,
+    required this.eventReference, // Accept event reference
     required this.screenWidth,
     this.joined = false,
   });
@@ -164,35 +168,38 @@ class _MatchCardState extends State<MatchCard> {
                 bottom: 12,
                 child: GestureDetector(
                   onTap: () async {
-                    setState(() {
-                      joined = !joined;
-                    });
-
                     try {
-                      // Fetch the event ID from Firestore
-                      final QuerySnapshot snapshot = await FirebaseFirestore
-                          .instance
-                          .collection('events')
-                          .where('sportName', isEqualTo: widget.event.sport)
-                          .where('date', isEqualTo: widget.event.date)
-                          .where('location', isEqualTo: widget.event.location)
-                          .limit(1)
-                          .get();
+                      setState(() {
+                        joined = !joined;
+                      });
 
-                      if (snapshot.docs.isNotEmpty) {
-                        final eventId = snapshot.docs.first.id;
+                      final userProvider =
+                          Provider.of<UserProvider>(context, listen: false);
+                      final kfupmId = userProvider.kfupmId;
 
-                        // Update user_matches with the eventId
-                        await FirebaseFirestore.instance
-                            .collection("user_matches")
-                            .doc(eventId)
-                            .set({
-                          "eventId": eventId,
-                          "sport": widget.event.sport,
-                          "joined": joined,
-                          "playerName": widget.event.player,
+                      if (kfupmId == null) {
+                        throw Exception("KFUPM ID is not available.");
+                      }
+
+                      final playerMatchRef = FirebaseFirestore.instance
+                          .collection('playerMatches')
+                          .doc(kfupmId);
+
+                      if (joined) {
+                        // Add the event reference to the matches array
+                        await playerMatchRef.update({
+                          "matches":
+                              FieldValue.arrayUnion([widget.eventReference]),
                         });
+                      } else {
+                        // Safely remove the reference
+                        await playerMatchRef.update({
+                          "matches":
+                              FieldValue.arrayRemove([widget.eventReference]),
+                        });
+                      }
 
+                      if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(joined
@@ -200,15 +207,13 @@ class _MatchCardState extends State<MatchCard> {
                                 : "Successfully left!"),
                           ),
                         );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Event not found!")),
-                        );
                       }
                     } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Error: $e")),
-                      );
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Error: $e")),
+                        );
+                      }
                     }
                   },
                   child: Container(

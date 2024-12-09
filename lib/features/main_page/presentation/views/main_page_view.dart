@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
 import 'package:kfupm_sports/features/authentication/auth_screen.dart';
@@ -58,8 +59,8 @@ class MainPageView extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: StreamBuilder<List<Map<String, dynamic>>>(
-        stream: matchProvider.streamPlayerMatches(context),
+      body: StreamBuilder<List<DocumentSnapshot>>(
+        stream: matchProvider.streamPlayerMatchesWithReferences(context),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -81,7 +82,9 @@ class MainPageView extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             itemCount: matches.length,
             itemBuilder: (context, index) {
-              final match = matches[index];
+              final matchDoc = matches[index];
+              final match = matchDoc.data() as Map<String, dynamic>;
+
               final sport = match['sportName'] ?? 'Unknown Sport';
               final players = match['players'] as List<dynamic>? ?? [];
               final player = players.isNotEmpty ? players[0] : 'Unknown Player';
@@ -102,6 +105,7 @@ class MainPageView extends StatelessWidget {
                 children: [
                   MatchCard(
                     event: eventObject,
+                    eventReference: matchDoc.reference, // Pass the reference
                     screenWidth: MediaQuery.of(context).size.width,
                     joined: true,
                   ),

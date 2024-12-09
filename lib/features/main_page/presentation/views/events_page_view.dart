@@ -6,12 +6,11 @@ import 'package:kfupm_sports/core/theme/app_colors.dart';
 import 'package:kfupm_sports/features/main_page/presentation/views/add_event_view.dart';
 import 'package:kfupm_sports/features/main_page/presentation/widgets/match_card.dart';
 import 'package:kfupm_sports/models/event_model.dart';
-import 'package:kfupm_sports/providers/match_provider.dart';
 import 'package:kfupm_sports/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../providers/auth_provider.dart';
-import '../../../authentication/auth_screen.dart';
+import 'package:kfupm_sports/providers/auth_provider.dart';
+import 'package:kfupm_sports/features/authentication/auth_screen.dart';
 
 class EventsPageView extends StatelessWidget {
   const EventsPageView({super.key});
@@ -21,6 +20,7 @@ class EventsPageView extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final authProvider =
         Provider.of<AuthenticationProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -84,14 +84,17 @@ class EventsPageView extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             itemCount: events.length,
             itemBuilder: (context, index) {
-              final event = events[index].data() as Map<String, dynamic>;
+              final eventDoc = events[index];
+              final event = eventDoc.data() as Map<String, dynamic>;
+
+              // Extract event details
               final sport = event['sportName'];
               final player = event["players"][0];
               final location = event['location'];
               final playersJoined = event['playersJoined'];
               final date = event['date'];
-              final remainingCapacity = event['remainingCapacity'];
 
+              // Create Event model
               Event eventObject = Event(
                 sport: sport,
                 player: player,
@@ -99,10 +102,12 @@ class EventsPageView extends StatelessWidget {
                 date: date,
                 location: location,
               );
+
               return Column(
                 children: [
                   MatchCard(
                     event: eventObject,
+                    eventReference: eventDoc.reference, // Pass the reference
                     screenWidth: MediaQuery.of(context).size.width,
                     joined: false,
                   ),
