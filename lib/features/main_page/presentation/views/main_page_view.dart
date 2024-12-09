@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/core/theme/app_colors.dart';
@@ -91,7 +93,6 @@ class MainPageView extends StatelessWidget {
               final location = match['location'] ?? 'Unknown Location';
               final playersJoined = match['playersJoined'] ?? '0';
               final date = match['date'] ?? 'Unknown Date';
-              final remainingCapacity = match['remainingCapacity'] ?? '0';
 
               Event eventObject = Event(
                 sport: sport,

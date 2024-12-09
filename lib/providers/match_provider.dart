@@ -21,7 +21,7 @@ class MatchProvider with ChangeNotifier {
 
     if (kfupmId == null) {
       // Return an empty stream if KFUPM ID is not available
-      return Stream.empty();
+      return const Stream.empty();
     }
 
     // Fetch the matches references for the player and return the actual match documents
@@ -52,7 +52,8 @@ class MatchProvider with ChangeNotifier {
   }
 
   // Example: Add a new match to a player's matches list
-  Future<void> addMatchToPlayer(BuildContext context, DocumentReference matchRef) async {
+  Future<void> addMatchToPlayer(
+      BuildContext context, DocumentReference matchRef) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     final kfupmId = userProvider.kfupmId;
 
@@ -69,7 +70,8 @@ class MatchProvider with ChangeNotifier {
   }
 
   // Example: Remove a match from a player's matches list
-  Future<void> removeMatchFromPlayer(BuildContext context, DocumentReference matchRef) async {
+  Future<void> removeMatchFromPlayer(
+      BuildContext context, DocumentReference matchRef) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     final kfupmId = userProvider.kfupmId;
 

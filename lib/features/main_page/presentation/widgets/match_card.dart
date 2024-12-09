@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kfupm_sports/models/event_model.dart';
@@ -24,8 +26,9 @@ class MatchCard extends StatefulWidget {
 }
 
 class _MatchCardState extends State<MatchCard> {
+  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   late bool joined;
-
+  var playerMatches = FirebaseFirestore.instance.collection("playerMatches");
   @override
   void initState() {
     super.initState();
@@ -92,7 +95,7 @@ class _MatchCardState extends State<MatchCard> {
                 left: 12,
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.sports,
                       size: 24,
                       color: Colors.white,
@@ -191,12 +194,21 @@ class _MatchCardState extends State<MatchCard> {
                           "matches":
                               FieldValue.arrayUnion([widget.eventReference]),
                         });
+
+                        await widget.eventReference
+                            .update({"playersJoined": FieldValue.increment(1)});
+                        await widget.eventReference.update(
+                            {"remainingCapacity": FieldValue.increment(-1)});
                       } else {
                         // Safely remove the reference
                         await playerMatchRef.update({
                           "matches":
                               FieldValue.arrayRemove([widget.eventReference]),
                         });
+                        await widget.eventReference.update(
+                            {"playersJoined": FieldValue.increment(-1)});
+                        await widget.eventReference.update(
+                            {"remainingCapacity": FieldValue.increment(1)});
                       }
 
                       if (mounted) {

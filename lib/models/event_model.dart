@@ -1,7 +1,7 @@
 class Event {
   String sport;
   String player;
-  String playersJoined;
+  int playersJoined;
   String date;
   String location;
 

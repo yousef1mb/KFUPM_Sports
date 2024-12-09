@@ -11,7 +11,8 @@ class InvitationCard extends StatelessWidget {
   final VoidCallback onDecline;
 
   // Constructor for the InvitationCardWidget
-  InvitationCard({
+  const InvitationCard({
+    super.key,
     required this.name,
     required this.time,
     required this.day,
@@ -45,14 +46,14 @@ class InvitationCard extends StatelessWidget {
                     height: 0.07),
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -63,7 +64,7 @@ class InvitationCard extends StatelessWidget {
                       Text(
                         day,
                       ),
-                      Text(" | "),
+                      const Text(" | "),
                       Text(
                         "Bld# $building",
                       ),
@@ -75,13 +76,13 @@ class InvitationCard extends StatelessWidget {
             // Accept/Decline buttons on the same row
             IconButton(
               iconSize: MediaQuery.of(context).size.width / 10,
-              icon: Icon(Icons.check_circle,
+              icon: const Icon(Icons.check_circle,
                   color: AppColors.navigationBarHighlight),
               onPressed: onAccept,
             ),
             IconButton(
               iconSize: MediaQuery.of(context).size.width / 10,
-              icon: Icon(Icons.cancel, color: AppColors.navigationBar),
+              icon: const Icon(Icons.cancel, color: AppColors.navigationBar),
               onPressed: onDecline,
             ),
           ],

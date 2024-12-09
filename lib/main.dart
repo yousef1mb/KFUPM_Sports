@@ -91,8 +91,6 @@ class AuthWrapper extends StatelessWidget {
           debugPrint('No user logged in.');
           return const LoginScreen();
         }
-
-        final user = snapshot.data!;
         return FutureBuilder<void>(
           future: userProvider.initializeKfupmId(), // Initialize KFUPM ID
           builder: (context, kfupmSnapshot) {

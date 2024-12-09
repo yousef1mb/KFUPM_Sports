@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
@@ -26,8 +28,8 @@ class _AddEventViewState extends State<AddEventView> {
   List<String> players = []; // List of players
   DateTime? selectedDateTime;
   int playersCount = 0;
-  int capacity = 18; // Default total capacity
-  int remainingCapacity = 18; // Remaining capacity (calculated dynamically)
+  int capacity = 24; // Default total capacity
+  int remainingCapacity = 24; // Remaining capacity (calculated dynamically)
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _AddEventViewState extends State<AddEventView> {
     try {
       // Get the KFUPM ID from the UserProvider
       final userProvider = Provider.of<UserProvider>(context, listen: false);
+
       final kfupmId = userProvider.kfupmId;
 
       if (kfupmId == null) {
@@ -158,7 +161,7 @@ class _AddEventViewState extends State<AddEventView> {
                               playersCount--;
                               remainingCapacity++;
                               players.removeLast();
-                              event.playersJoined = playersCount.toString();
+                              event.playersJoined = playersCount;
                             }
                           });
                         },
@@ -178,7 +181,7 @@ class _AddEventViewState extends State<AddEventView> {
                               playersCount++;
                               remainingCapacity--;
                               players.add("guest_$playersCount");
-                              event.playersJoined = playersCount.toString();
+                              event.playersJoined = playersCount;
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -262,13 +265,22 @@ class _AddEventViewState extends State<AddEventView> {
             child: ElevatedButton(
               onPressed: () async {
                 if (event.sport.isEmpty ||
-                    event.date.isEmpty ||
-                    event.location.isEmpty) {
+                    event.location.isEmpty ||
+                    event.date.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Please fill in all fields")),
+                    SnackBar(
+                      content: Text(
+                        event.sport.isEmpty
+                            ? "Please select a sport name."
+                            : event.location.isEmpty
+                                ? "Please select a location."
+                                : "Please pick a date/time.",
+                      ),
+                    ),
                   );
                   return;
                 }
+
                 try {
                   const uuid = Uuid();
                   String matchId = uuid.v4();
@@ -277,7 +289,7 @@ class _AddEventViewState extends State<AddEventView> {
                     "playersJoined": event.playersJoined,
                     "players": players,
                     "capacity": capacity.toString(),
-                    "remainingCapacity": remainingCapacity.toString(),
+                    "remainingCapacity": remainingCapacity,
                     "date": event.date,
                     "location": event.location,
                   });
@@ -289,6 +301,9 @@ class _AddEventViewState extends State<AddEventView> {
                   );
 
                   Navigator.pop(context);
+                  final eventProvider =
+                      Provider.of<GeneralProvider>(context, listen: false);
+                  eventProvider.resetEvent();
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Error adding event: $e")),

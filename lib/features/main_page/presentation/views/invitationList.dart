@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, avoid_print
+
 import 'package:flutter/material.dart';
 import "package:kfupm_sports/models/invitation_model.dart";
 import '../widgets/invitaion_card.dart';
@@ -64,58 +66,55 @@ class InvitationList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      //color: AppColors.navigationBar,
-      child: SingleChildScrollView(
-        // Wrap everything inside a SingleChildScrollView
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Title with invitations count
-            Row(
-              children: [
-                Text(
-                  'Invitations',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(width: 3),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '(${invitations.length})',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // Scrollable list of invitations
-            Container(
-              height: MediaQuery.of(context).size.height /
-                  2, //  dynamic height calculation
-              child: ListView.builder(
-                itemCount: invitations.length,
-                itemBuilder: (context, index) {
-                  final invitation = invitations[index];
-                  return InvitationCard(
-                    name: invitation.name,
-                    building: invitation.building,
-                    time: invitation.time,
-                    day: invitation.day,
-                    sport: invitation.sport,
-                    onAccept: invitation.onAccept,
-                    onDecline: invitation.onDecline,
-                  );
-                },
+    return SingleChildScrollView(
+      // Wrap everything inside a SingleChildScrollView
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title with invitations count
+          Row(
+            children: [
+              const Text(
+                'Invitations',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
+              const SizedBox(width: 3),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '(${invitations.length})',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          // Scrollable list of invitations
+          SizedBox(
+            height: MediaQuery.of(context).size.height /
+                2, //  dynamic height calculation
+            child: ListView.builder(
+              itemCount: invitations.length,
+              itemBuilder: (context, index) {
+                final invitation = invitations[index];
+                return InvitationCard(
+                  name: invitation.name,
+                  building: invitation.building,
+                  time: invitation.time,
+                  day: invitation.day,
+                  sport: invitation.sport,
+                  onAccept: invitation.onAccept,
+                  onDecline: invitation.onDecline,
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

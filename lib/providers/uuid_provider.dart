@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -49,7 +51,7 @@ class UserProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error initializing KFUPM ID: $e');
-      throw e; // Re-throw the error for further handling if needed
+      rethrow; // Re-throw the error for further handling if needed
     }
   }
 

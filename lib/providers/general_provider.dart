@@ -3,10 +3,19 @@ import 'package:kfupm_sports/models/event_model.dart';
 
 class GeneralProvider extends ChangeNotifier {
   Event event = Event(
-    sport: 'TBA',
+    sport: '',
     player: 'Uknown',
-    playersJoined: '0',
-    date: 'TBA',
-    location: 'TBA',
+    playersJoined: 1,
+    date: '',
+    location: '',
   );
+
+  void resetEvent() {
+    event.sport = '';
+    event.player = 'Uknown';
+    event.playersJoined = 1;
+    event.date = '';
+    event.location = '';
+    notifyListeners();
+  }
 }
