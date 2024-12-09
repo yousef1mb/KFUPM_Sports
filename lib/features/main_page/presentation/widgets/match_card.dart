@@ -210,7 +210,19 @@ class _MatchCardState extends State<MatchCard> {
                         await widget.eventReference.update(
                             {"remainingCapacity": FieldValue.increment(1)});
                       }
-
+                      // Check playersJoined value and delete the document if 0
+                      final snapshot = await widget.eventReference.get();
+                      final playersJoined = snapshot.get("playersJoined") ?? 0;
+                      if (playersJoined == 0) {
+                        await widget.eventReference.delete();
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    "Match deleted as no players joined!")),
+                          );
+                        }
+                      }
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
