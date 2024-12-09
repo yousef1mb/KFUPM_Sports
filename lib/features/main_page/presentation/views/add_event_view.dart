@@ -1,12 +1,11 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:kfupm_sports/providers/player_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 import '../../../../providers/general_provider.dart';
+import '../../../../providers/player_provider.dart';
+import '../../../../providers/uuid_provider.dart';
 
 class AddEventView extends StatefulWidget {
   const AddEventView({super.key});
@@ -33,20 +32,55 @@ class _AddEventViewState extends State<AddEventView> {
   @override
   void initState() {
     super.initState();
-    final event = Provider.of<GeneralProvider>(context, listen: false).event;
+    _initializePlayerName();
+  }
 
-    // Add current user as the first player
-    players.add(event.player);
+  Future<void> _initializePlayerName() async {
+    try {
+      // Get the KFUPM ID from the UserProvider
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final kfupmId = userProvider.kfupmId;
 
-    playersCount = players.length; // Initialize players count
-    remainingCapacity =
-        capacity - playersCount; // Initialize remaining capacity
+      if (kfupmId == null) {
+        throw Exception('KFUPM ID is not initialized.');
+      }
+
+      // Reference to the player's document in Firestore
+      final playerDoc = await FirebaseFirestore.instance
+          .collection('players')
+          .doc(kfupmId)
+          .get();
+
+      if (playerDoc.exists) {
+        final playerName = playerDoc['name'] as String;
+
+        setState(() {
+          // Update the event player name
+          final event =
+              Provider.of<GeneralProvider>(context, listen: false).event;
+          event.player = playerName;
+
+          // Add the player to the players list
+          players.add(playerName);
+          playersCount = players.length;
+          remainingCapacity = capacity - playersCount;
+        });
+      } else {
+        throw Exception('Player document does not exist.');
+      }
+    } catch (e) {
+      print('Error fetching player name: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error fetching player name: $e")),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final event = Provider.of<GeneralProvider>(context, listen: false).event;
     final playerProvider = Provider.of<PlayerProvider>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFE2B56F),
@@ -77,8 +111,6 @@ class _AddEventViewState extends State<AddEventView> {
                 },
               ),
               const SizedBox(height: 16),
-
-              // Location Dropdown
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(labelText: "Location"),
                 items: locations.map((loc) {
@@ -94,8 +126,6 @@ class _AddEventViewState extends State<AddEventView> {
                 },
               ),
               const SizedBox(height: 16),
-
-              // Total Capacity Input Field
               TextFormField(
                 initialValue: capacity.toString(),
                 decoration: const InputDecoration(
@@ -105,19 +135,15 @@ class _AddEventViewState extends State<AddEventView> {
                 onChanged: (value) {
                   setState(() {
                     final newCapacity = int.tryParse(value) ?? capacity;
-                    remainingCapacity =
-                        newCapacity - playersCount; // Update remaining capacity
+                    remainingCapacity = newCapacity - playersCount;
                     capacity = newCapacity;
                   });
                 },
               ),
               const SizedBox(height: 16),
-
-              // Register Guests and Remaining Capacity
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Register Guests
                   Row(
                     children: [
                       const Text(
@@ -130,8 +156,8 @@ class _AddEventViewState extends State<AddEventView> {
                           setState(() {
                             if (playersCount > 1) {
                               playersCount--;
-                              remainingCapacity++; // Increase remaining capacity
-                              players.removeLast(); // Remove last guest
+                              remainingCapacity++;
+                              players.removeLast();
                               event.playersJoined = playersCount.toString();
                             }
                           });
@@ -150,8 +176,8 @@ class _AddEventViewState extends State<AddEventView> {
                           setState(() {
                             if (remainingCapacity > 0) {
                               playersCount++;
-                              remainingCapacity--; // Decrease remaining capacity
-                              players.add("guest_$playersCount"); // Add guest
+                              remainingCapacity--;
+                              players.add("guest_$playersCount");
                               event.playersJoined = playersCount.toString();
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -165,7 +191,6 @@ class _AddEventViewState extends State<AddEventView> {
                       ),
                     ],
                   ),
-                  // Remaining Capacity
                   Text(
                     "Remaining: $remainingCapacity",
                     style: const TextStyle(
@@ -176,8 +201,6 @@ class _AddEventViewState extends State<AddEventView> {
                 ],
               ),
               const SizedBox(height: 16),
-
-              // Date & Time Picker Button
               ElevatedButton(
                 onPressed: () async {
                   final now = DateTime.now();
@@ -252,10 +275,9 @@ class _AddEventViewState extends State<AddEventView> {
                   await events.doc(matchId).set({
                     "sportName": event.sport,
                     "playersJoined": event.playersJoined,
-                    "players": players, // Save players list to Firestore
+                    "players": players,
                     "capacity": capacity.toString(),
-                    "remainingCapacity":
-                        remainingCapacity.toString(), // Save remaining capacity
+                    "remainingCapacity": remainingCapacity.toString(),
                     "date": event.date,
                     "location": event.location,
                   });
