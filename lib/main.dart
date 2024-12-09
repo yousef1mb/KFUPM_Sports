@@ -77,6 +77,7 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
@@ -92,8 +93,7 @@ class AuthWrapper extends StatelessWidget {
 
         // User is logged in, proceed to initialize user data
         return FutureBuilder<void>(
-          future: Provider.of<UserProvider>(context, listen: false)
-              .initializeKfupmId(),
+          future: userProvider.initializeKfupmId(),
           builder: (context, initSnapshot) {
             if (initSnapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -108,8 +108,7 @@ class AuthWrapper extends StatelessWidget {
             return FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance
                   .collection('players')
-                  .doc(
-                      Provider.of<UserProvider>(context, listen: false).kfupmId)
+                  .doc(userProvider.kfupmId)
                   .get(),
               builder: (context, profileSnapshot) {
                 if (profileSnapshot.connectionState ==
