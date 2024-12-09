@@ -109,8 +109,7 @@ class AuthWrapper extends StatelessWidget {
             return FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance
                   .collection('players')
-                  .doc(
-                      userProvider.kfupmId) // Use KFUPM ID instead of hardcoded
+                  .doc(userProvider.kfupmId)
                   .get(),
               builder: (context, userSnapshot) {
                 if (userSnapshot.connectionState == ConnectionState.waiting) {
