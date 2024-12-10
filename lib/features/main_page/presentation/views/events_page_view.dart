@@ -10,10 +10,37 @@ import 'package:kfupm_sports/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:kfupm_sports/providers/auth_provider.dart';
+import 'package:kfupm_sports/providers/user_provider.dart';
 import 'package:kfupm_sports/features/authentication/auth_screen.dart';
 
 class EventsPageView extends StatelessWidget {
   const EventsPageView({super.key});
+
+  Future<String?> _fetchCurrentUserName(BuildContext context) async {
+    try {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final kfupmId = userProvider.kfupmId;
+
+      if (kfupmId == null) {
+        throw Exception('KFUPM ID is not initialized.');
+      }
+
+      // Reference to the player's document in Firestore
+      final playerDoc = await FirebaseFirestore.instance
+          .collection('players')
+          .doc(kfupmId)
+          .get();
+
+      if (playerDoc.exists) {
+        return playerDoc['name'] as String?;
+      } else {
+        throw Exception('Player document does not exist.');
+      }
+    } catch (e) {
+      debugPrint('Error fetching current user name: $e');
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,58 +88,78 @@ class EventsPageView extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('events').snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: FutureBuilder<String?>(
+        future: _fetchCurrentUserName(context),
+        builder: (context, userSnapshot) {
+          if (userSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(
                 child: CircularProgressIndicator(color: Colors.green));
           }
 
-          if (snapshot.hasError) {
+          if (userSnapshot.hasError || userSnapshot.data == null) {
             return const Center(
-                child: Text('Please make sure to connect to the Internet'));
+                child: Text('Error fetching current user name.'));
           }
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No events found'));
-          }
+          final currentUserName = userSnapshot.data!;
 
-          final events = snapshot.data!.docs;
+          return StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('events').snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                    child: CircularProgressIndicator(color: Colors.green));
+              }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16.0),
-            itemCount: events.length,
-            itemBuilder: (context, index) {
-              final eventDoc = events[index];
-              final event = eventDoc.data() as Map<String, dynamic>;
+              if (snapshot.hasError) {
+                return const Center(
+                    child: Text('Please make sure to connect to the Internet'));
+              }
 
-              // Extract event details
-              final sport = event['sportName'];
-              final player = event["players"][0];
-              final location = event['location'];
-              final playersJoined = event['playersJoined'];
-              final date = event['date'];
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text('No events found'));
+              }
 
-              // Create Event model
-              Event eventObject = Event(
-                sport: sport,
-                player: player,
-                playersJoined: playersJoined,
-                date: date,
-                location: location,
-              );
+              final events = snapshot.data!.docs;
 
-              return Column(
-                children: [
-                  MatchCard(
-                    event: eventObject,
-                    eventReference: eventDoc.reference, // Pass the reference
-                    screenWidth: MediaQuery.of(context).size.width,
-                    joined: false,
-                  ),
-                  const SizedBox(height: 16),
-                ],
+              return ListView.builder(
+                padding: const EdgeInsets.all(16.0),
+                itemCount: events.length,
+                itemBuilder: (context, index) {
+                  final eventDoc = events[index];
+                  final event = eventDoc.data() as Map<String, dynamic>;
+
+                  // Extract event details
+                  final sport = event['sportName'];
+                  final players = List<String>.from(event['players']);
+                  final location = event['location'];
+                  final playersJoined = event['playersJoined'];
+                  final date = event['date'];
+
+                  // Determine if the current user has joined the event
+                  final isJoined = players.contains(currentUserName);
+
+                  // Create Event model
+                  Event eventObject = Event(
+                    sport: sport,
+                    player: players.isNotEmpty ? players.first : '',
+                    playersJoined: playersJoined,
+                    date: date,
+                    location: location,
+                  );
+
+                  return Column(
+                    children: [
+                      MatchCard(
+                        event: eventObject,
+                        eventReference: eventDoc.reference, // Pass the reference
+                        screenWidth: MediaQuery.of(context).size.width,
+                        joined: isJoined, // Set joined based on player list
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  );
+                },
               );
             },
           );
